@@ -70,7 +70,7 @@
 == Breadth-first (vtkHyperTreeGrid) layout ==
 depth (levels present)    : 4
 NumberOfVerticesPerDepth  : 1 4 16 36
-total vertices (cells)    : 57
+total cells               : 57
 leaves                    : 43
 descriptor bits           : 21  (deepest level omitted)
   depth 0: 1

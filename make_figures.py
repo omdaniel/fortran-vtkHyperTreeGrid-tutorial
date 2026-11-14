@@ -223,7 +223,7 @@ def fig_tree(cells):
         row = [c for c in order if c["level"] == d]
         y = oy + dy * d
         body.append(text(18, y + 4, f"depth {d}", 12, "start", "bold"))
-        body.append(text(rx, y - 2, f"{len(row)} " + ("vertex" if len(row) == 1 else "vertices"), 12, "start"))
+        body.append(text(rx, y - 2, f"{len(row)} " + ("cell" if len(row) == 1 else "cells"), 12, "start"))
         if d < MAX_LEVEL:
             bits = "".join("1" if c["refined"] else "0" for c in row)
             groups = " ".join(bits[i:i + 4] for i in range(0, len(bits), 4))

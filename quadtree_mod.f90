@@ -3,10 +3,10 @@
 !!
 !! Conventions follow VTK's vtkHyperTree / vtkHyperTreeGrid:
 !!   * child index ic = ix + 2*iy, with ix, iy in {0,1}  (x is the fastest bit)
-!!   * every vertex (refined or leaf) carries a cell value
-!!   * the descriptor holds one bit per vertex, breadth first, level by level,
+!!   * every cell (refined or leaf) carries a value
+!!   * the descriptor holds one bit per cell, breadth first, level by level,
 !!     1 = refined, 0 = leaf, and the deepest level is omitted
-!!   * NumberOfVerticesPerDepth holds the vertex count at each depth
+!!   * NumberOfVerticesPerDepth holds the cell count at each depth
 !!
 !! Requires a Fortran 2008 compiler (recursive allocatable components).
 module quadtree_mod
@@ -160,8 +160,8 @@ contains
   !-------------------------------------------------------------------------
 
   !> The conversion VTK itself uses (vtkHyperTree::ComputeBreadthFirstOrderDescriptor):
-  !> walk the tree depth first, but append each vertex to a list for its depth.
-  !> Within one depth, a depth-first walk meets vertices left to right, which
+  !> walk the tree depth first, but append each cell to a list for its depth.
+  !> Within one depth, a depth-first walk meets cells left to right, which
   !> is exactly breadth-first order, so concatenating the lists gives the
   !> breadth-first layout with no queue.
   function to_breadth_first(root) result(bf)
@@ -233,7 +233,7 @@ contains
     allocate (bf%descriptor, source=refined(1:size(refined) - nlast))
   end function to_breadth_first_queue
 
-  !> Consistency of a breadth-first tree: each refined vertex at depth d
+  !> Consistency of a breadth-first tree: each refined cell at depth d
   !> contributes 4 vertices at depth d+1, and the sizes add up.
   logical function check_bf(bf) result(ok)
     type(htree_bf), intent(in) :: bf

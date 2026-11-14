@@ -35,7 +35,7 @@ program single_tree
   print '(/a)', '== Breadth-first (vtkHyperTreeGrid) layout =='
   print '(a, i0)', 'depth (levels present)    : ', bf%depth
   print '(a, *(i0, :, 1x))', 'NumberOfVerticesPerDepth  : ', bf%nverts_per_depth
-  print '(a, i0)', 'total vertices (cells)    : ', size(bf%values)
+  print '(a, i0)', 'total cells               : ', size(bf%values)
   print '(a, i0)', 'leaves                    : ', &
     size(bf%values) - count(bf%descriptor)
   print '(a, i0, a)', 'descriptor bits           : ', size(bf%descriptor), &

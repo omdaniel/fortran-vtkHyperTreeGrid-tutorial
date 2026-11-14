@@ -48,7 +48,7 @@ program forest
 
   ! 2. Each tree in breadth-first form.
   print '(/a)', '== Per tree =='
-  print '(a)', ' tree (i,j)  depth  verts/depth          descriptor'
+  print '(a)', ' tree (i,j)  depth  cells/depth          descriptor'
   do t = 0, ntrees - 1
     bf(t) = to_breadth_first(trees(t))
     if (.not. check_bf(bf(t))) error stop 'inconsistent tree'
@@ -84,7 +84,7 @@ program forest
   print '(a, i0)', 'leaves                     : ', size(cell_data) - count(descriptors)
 
   print '(/a)', '== Locating one cell: the value at the centre of tree 1 =='
-  ! Tree 1 is root cell (1,0). Its root is vertex 0 of that tree, so its
+  ! Tree 1 is root cell (1,0). Its root is cell 0 of that tree, so its
   ! value sits at cell_data(global_start + 0), 1-based in Fortran.
   print '(a, f8.5)', 'cell_data(GlobalIndexStart(1) + 1) = ', cell_data(global_start(2) + 1)
   print '(a, f8.5)', 'f at the centre of root cell (1,0) = ', bump_forest(1.5_dp, 0.5_dp)

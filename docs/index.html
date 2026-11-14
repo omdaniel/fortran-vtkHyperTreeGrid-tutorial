@@ -143,7 +143,7 @@ goes out of scope.</p>
 <p>A leaf is simply a node whose <code>child</code> is not allocated, so
 <code>allocated(node%child)</code> is the refined flag. Every node,
 refined or not, keeps a value; vtkHyperTreeGrid also stores a value for
-every vertex, not only for leaves.</p>
+every cell, not only for leaves.</p>
 <p>The function to map is passed in through an abstract interface, so
 the tree code knows nothing about it:</p>
 <div class="codeblock lang-fortran"><span class="lang">Fortran</span><pre class="code"><code><span class="kw">abstract</span> <span class="kw">interface</span>
@@ -262,24 +262,24 @@ f</figcaption>
 <h2 id="part-2-from-depth-first-to-breadth-first">Part 2: from depth
 first to breadth first</h2>
 <p>vtkHyperTreeGrid does not store pointers or a pre-order walk. It
-stores each tree level by level: all vertices at depth 0, then all at
-depth 1, and so on, with each refined vertex’s four children kept
-together in child order. Three arrays describe one tree completely:</p>
+stores each tree level by level: all cells at depth 0, then all at depth
+1, and so on, with each refined cell’s four children kept together in
+child order. Three arrays describe one tree completely:</p>
 <ul>
-<li><strong>Descriptor:</strong> one bit per vertex in breadth-first
+<li><strong>Descriptor:</strong> one bit per cell in breadth-first
 order, 1 = refined, 0 = leaf. The deepest level is left out, because
 nothing there can be refined.</li>
-<li><strong>NumberOfVerticesPerDepth:</strong> how many vertices sit at
-each depth, refined and leaf alike.</li>
-<li><strong>Cell values:</strong> one value per vertex, in the same
+<li><strong>NumberOfVerticesPerDepth:</strong> how many cells sit at
+each depth, refined and leaf alike. VTK names it after the vertices of
+the tree, but each one is a cell of the mesh.</li>
+<li><strong>Cell values:</strong> one value per cell, in the same
 breadth-first order.</li>
 </ul>
 <p>The conversion does not need a queue. Within one depth, a depth-first
-walk meets the vertices left to right, in exactly the order a
-breadth-first walk would. So we walk depth first, as we built the tree,
-and append each vertex to a list for its own depth; concatenating the
-lists gives the breadth-first layout. This is the same approach VTK
-takes in
+walk meets the cells left to right, in exactly the order a breadth-first
+walk would. So we walk depth first, as we built the tree, and append
+each cell to a list for its own depth; concatenating the lists gives the
+breadth-first layout. This is the same approach VTK takes in
 <code>vtkHyperTree::ComputeBreadthFirstOrderDescriptor</code>.</p>
 <div class="codeblock lang-fortran"><span class="lang">Fortran</span><pre class="code"><code><span class="kw">type</span> <span class="op">::</span> <span class="nm">depth_bucket</span>
   <span class="ty">logical</span>,  <span class="at">allocatable</span> <span class="op">::</span> refined(:)
@@ -324,7 +324,7 @@ preallocated arrays. For the single tree of Part 1 the program
 prints:</p>
 <div class="codeblock lang-text"><span class="lang">Output</span><pre class="code"><code>depth (levels present)    : 4
 NumberOfVerticesPerDepth  : 1 4 16 36
-total vertices (cells)    : 57
+total cells               : 57
 leaves                    : 43
 descriptor bits           : 21  (deepest level omitted)
   depth 0: 1
@@ -332,12 +332,12 @@ descriptor bits           : 21  (deepest level omitted)
   depth 2: 0011001011111010
 descriptor bytes (hex)    : F9 97 D0</code></pre></div>
 <p>Reading the depth-2 bits in groups of four gives the children of each
-level-1 vertex in turn: <code>0011</code> says children 02 and 03 are
+level-1 cell in turn: <code>0011</code> says children 02 and 03 are
 refined, <code>0010</code> says only 12 is, <code>1111</code> refines
 all of 20 to 23, and <code>1010</code> refines 30 and 32. Those match
 the depth-first listing in Part 1 line for line. The counts check
-themselves too: four refined vertices at depth 1 give 16 at depth 2, and
-nine refined vertices at depth 2 give 36 at depth 3.</p>
+themselves too: four refined cells at depth 1 give 16 at depth 2, and
+nine refined cells at depth 2 give 36 at depth 3.</p>
 <p>The whole tree makes the mapping visible. The grey number beside each
 node is the order the depth-first build visits it; the number inside is
 its breadth-first storage index. Reading each row left to right gives
@@ -611,11 +611,11 @@ would choose its own rule.</li>
 written. vtkHDF also asks each piece’s descriptor and mask bits to start
 on a new byte.</li>
 <li><strong>Performance:</strong> arrays grow by reallocation on
-assignment, which is quadratic. A production writer would count vertices
+assignment, which is quadratic. A production writer would count cells
 per depth first and fill preallocated arrays.</li>
 </ul>
 <p>What was checked, and what was not. The child ordering, the
-descriptor rules, the bit packing, the per-depth vertex counts, the root
+descriptor rules, the bit packing, the per-depth cell counts, the root
 indexing and the XML v2 array names were taken from VTK’s documentation
 and source (listed below). The programs check their own arrays for
 consistency and compare two independent conversions. The arrays were not

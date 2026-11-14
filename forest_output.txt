@@ -18,7 +18,7 @@
 1 1 1 1 2 2 3 3|3 3 3 3 3 3 2 2|1 1 1 1 1 1 1 1|0 0 0 0 0 0 0 0 
 
 == Per tree ==
- tree (i,j)  depth  verts/depth          descriptor
+ tree (i,j)  depth  cells/depth          descriptor
     0 (0,0)     4   1 4 8 28             1 0101 01111111 
     1 (1,0)     4   1 4 16 60            1 1111 1111101111111111 
     2 (2,0)     4   1 4 4 8              1 0010 1010 
