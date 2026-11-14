@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adaptive quadtrees in modern Fortran: from depth-first to
+vtkhypertreegrid</title>
+<meta name="description" content="Build an adaptive quadtree depth
+first, grow it into a forest of quadtrees, and lay it out breadth first,
+the way vtkHyperTreeGrid stores it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="masthead">
+  <div class="masthead-inner">
+    <p class="kicker">A modern Fortran tutorial</p>
+    <h1>Adaptive quadtrees in modern Fortran<span class="subtitle">From
+depth-first to vtkHyperTreeGrid</span></h1>
+    <p class="lede">Build an adaptive quadtree depth first, grow it into
+a forest of quadtrees, and lay it out breadth first, the way
+vtkHyperTreeGrid stores it.</p>
+  </div>
+</header>
+<div class="layout">
+  <nav class="toc" aria-label="Contents">
+    <p class="toc-title">Contents</p>
+<ul>
+<li><a href="#overview" id="toc-overview">Overview</a></li>
+<li><a href="#part-1-one-quadtree-built-depth-first"
+id="toc-part-1-one-quadtree-built-depth-first">Part 1: one quadtree,
+built depth first</a></li>
+<li><a href="#part-2-from-depth-first-to-breadth-first"
+id="toc-part-2-from-depth-first-to-breadth-first">Part 2: from depth
+first to breadth first</a></li>
+<li><a href="#part-3-a-forest-of-quadtrees"
+id="toc-part-3-a-forest-of-quadtrees">Part 3: a forest of
+quadtrees</a></li>
+<li><a href="#running-it" id="toc-running-it">Running it</a></li>
+<li><a href="#caveats-and-limits" id="toc-caveats-and-limits">Caveats
+and limits</a></li>
+<li><a href="#sources" id="toc-sources">Sources</a></li>
+</ul>
+  </nav>
+  <main class="content">
+<h2 id="overview"><a class="anchor" href="#overview" aria-hidden="true">#</a>Overview</h2>
+<p>This tutorial builds an adaptive quadtree in plain modern Fortran,
+depth first, and then shows how the same tree is laid out breadth first,
+the way vtkHyperTreeGrid stores it. It starts with one tree, grows to a
+forest of trees over a coarse grid of root cells, and ends with the
+exact arrays a vtkHyperTreeGrid writer needs: Descriptors,
+NumberOfVerticesPerDepth, TreeIds, DepthPerTree and the cell data.</p>
+<p>The code is self-contained: two small modules and three short
+programs, about 560 lines of Fortran in all, plus a small figure script,
+standard Fortran 2008 (it compiles cleanly with
+<code>-std=f2018 -Wall</code> under gfortran 13.3). It has no dependency
+on VTK or HDF5; the point is the data layout, not the file I/O.</p>
+<div class="table-wrap"><table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>What it holds</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>quadtree_mod.f90</code></td>
+<td>The tree type, depth-first refinement, the breadth-first conversion
+and checks</td>
+</tr>
+<tr class="even">
+<td><code>field_mod.f90</code></td>
+<td>The function being mapped, a smooth Gaussian bump</td>
+</tr>
+<tr class="odd">
+<td><code>single_tree.f90</code></td>
+<td>Parts 1 and 2: one tree on the unit square</td>
+</tr>
+<tr class="even">
+<td><code>forest.f90</code></td>
+<td>Part 3: a 4 x 2 forest and its global arrays</td>
+</tr>
+<tr class="odd">
+<td><code>export_cells.f90</code></td>
+<td>Writes every cell of both examples to text, for the figures</td>
+</tr>
+<tr class="even">
+<td><code>make_figures.py</code></td>
+<td>Draws the SVG figures (Python standard library only)</td>
+</tr>
+<tr class="odd">
+<td><code>viridis256.txt</code></td>
+<td>The viridis colour table (CC0) used for the coloured figures</td>
+</tr>
+<tr class="even">
+<td><code>TUTORIAL.md</code></td>
+<td>This tutorial, as Markdown</td>
+</tr>
+<tr class="odd">
+<td><code>make_site.py</code>, <code>site/</code></td>
+<td>Build the styled GitHub Pages version of this tutorial into
+<code>docs/</code> (needs pandoc)</td>
+</tr>
+<tr class="even">
+<td><code>Makefile</code></td>
+<td><code>make run</code> builds and runs the programs;
+<code>make figures</code> redraws the figures; <code>make site</code>
+rebuilds <code>docs/</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>The function is cherry-picked on purpose. It is a single Gaussian
+bump whose width is comparable to the root cell size, so the simple
+five-point refinement test used here always sees it. Real functions with
+features narrower than a cell can slip between the samples and never
+trigger refinement; this example does nothing about that, and the method
+is not robust for real-world function mapping (see the last
+section).</p>
+<h2 id="part-1-one-quadtree-built-depth-first">Part 1: one quadtree,
+built depth first</h2>
+<p>A depth-first tree is the natural thing to write in Fortran: a
+derived type whose children are an allocatable array of the same type.
+Recursive allocatable components are Fortran 2008, so no pointers and no
+manual deallocation are needed; the whole tree is freed when the root
+goes out of scope.</p>
+<div class="codeblock lang-fortran"><span class="lang">Fortran</span><pre class="code"><code><span class="ty">integer</span>, <span class="at">parameter</span> <span class="op">::</span> MAX_LEVEL = <span class="nu">3</span>   <span class="co">! the root is level 0</span>
+<span class="ty">integer</span>, <span class="at">parameter</span> <span class="op">::</span> NCHILD = <span class="nu">4</span>
+
+<span class="kw">type</span> <span class="op">::</span> <span class="nm">qnode</span>
+  <span class="ty">integer</span>  <span class="op">::</span> level = <span class="nu">0</span>
+  <span class="ty">real</span>(dp) <span class="op">::</span> x0 = <span class="nu">0</span>, y0 = <span class="nu">0</span>      <span class="co">! lower-left corner</span>
+  <span class="ty">real</span>(dp) <span class="op">::</span> h = <span class="nu">1</span>               <span class="co">! edge length (square cells)</span>
+  <span class="ty">real</span>(dp) <span class="op">::</span> <span class="at">value</span> = <span class="nu">0</span>           <span class="co">! f sampled at the cell centre</span>
+  <span class="ty">type</span>(qnode), <span class="at">allocatable</span> <span class="op">::</span> child(:)   <span class="co">! child(0:3) when refined</span>
+<span class="kw">end</span> <span class="kw">type</span> <span class="nm">qnode</span></code></pre></div>
+<p>A leaf is simply a node whose <code>child</code> is not allocated, so
+<code>allocated(node%child)</code> is the refined flag. Every node,
+refined or not, keeps a value; vtkHyperTreeGrid also stores a value for
+every vertex, not only for leaves.</p>
+<p>The function to map is passed in through an abstract interface, so
+the tree code knows nothing about it:</p>
+<div class="codeblock lang-fortran"><span class="lang">Fortran</span><pre class="code"><code><span class="kw">abstract</span> <span class="kw">interface</span>
+  <span class="kw">pure</span> <span class="kw">function</span> <span class="nm">field2d</span>(x, y) <span class="kw">result</span>(f)
+    <span class="kw">import</span> <span class="op">::</span> dp
+    <span class="ty">real</span>(dp), <span class="at">intent</span>(<span class="at">in</span>) <span class="op">::</span> x, y
+    <span class="ty">real</span>(dp) <span class="op">::</span> f
+  <span class="kw">end</span> <span class="kw">function</span> <span class="nm">field2d</span>
+<span class="kw">end</span> <span class="kw">interface</span></code></pre></div>
+<p>The refinement test samples f at the four corners and the centre of a
+cell and refines when the spread of those five samples exceeds a
+tolerance. Refinement stops at level 3, so a terminal leaf is at most
+1/8 of the root cell on a side.</p>
+<div class="codeblock lang-fortran"><span class="lang">Fortran</span><pre class="code"><code><span class="ty">logical</span> <span class="kw">function</span> <span class="nm">needs_refinement</span>(node, f, tol)
+  <span class="ty">type</span>(qnode), <span class="at">intent</span>(<span class="at">in</span>) <span class="op">::</span> node
+  <span class="ty">procedure</span>(field2d) <span class="op">::</span> f
+  <span class="ty">real</span>(dp), <span class="at">intent</span>(<span class="at">in</span>) <span class="op">::</span> tol
+  <span class="ty">real</span>(dp) <span class="op">::</span> s(<span class="nu">5</span>)
+  <span class="kw">associate</span> (x0 <span class="op">=&gt;</span> node<span class="op">%</span>x0, y0 <span class="op">=&gt;</span> node<span class="op">%</span>y0, h <span class="op">=&gt;</span> node<span class="op">%</span>h)
+    s = [ f(x0, y0), f(x0 + h, y0), f(x0, y0 + h), f(x0 + h, y0 + h), &amp;
+          f(x0 + <span class="nu">0.5_dp</span>*h, y0 + <span class="nu">0.5_dp</span>*h) ]
+  <span class="kw">end</span> <span class="kw">associate</span>
+  needs_refinement = (<span class="bu">maxval</span>(s) - <span class="bu">minval</span>(s)) &gt; tol
+<span class="kw">end</span> <span class="kw">function</span> <span class="nm">needs_refinement</span></code></pre></div>
+<p>The build itself is one recursive subroutine. Depth first means a
+child’s whole subtree is finished before its next sibling is started.
+The children are numbered the way VTK numbers them: child index ic = ix
++ 2*iy, so bit 0 picks the -x or +x half and bit 1 picks the -y or +y
+half (x is the fastest bit).</p>
+<figure>
+<img loading="lazy" src="figures/child_order.svg"
+alt="Child numbering inside a refined cell: 0 bottom left, 1 bottom right, 2 top left, 3 top right" />
+<figcaption aria-hidden="true">Child numbering inside a refined cell: 0
+bottom left, 1 bottom right, 2 top left, 3 top right</figcaption>
+</figure>
+<div class="codeblock lang-fortran"><span class="lang">Fortran</span><pre class="code"><code><span class="kw">recursive</span> <span class="kw">subroutine</span> <span class="nm">refine</span>(node, f, tol)
+  <span class="ty">type</span>(qnode), <span class="at">intent</span>(<span class="at">inout</span>) <span class="op">::</span> node
+  <span class="ty">procedure</span>(field2d) <span class="op">::</span> f
+  <span class="ty">real</span>(dp), <span class="at">intent</span>(<span class="at">in</span>) <span class="op">::</span> tol
+  <span class="ty">integer</span> <span class="op">::</span> ic, ix, iy
+
+  node<span class="op">%</span>value = f(node<span class="op">%</span>x0 + <span class="nu">0.5_dp</span>*node<span class="op">%</span>h, node<span class="op">%</span>y0 + <span class="nu">0.5_dp</span>*node<span class="op">%</span>h)
+  <span class="kw">if</span> (node<span class="op">%</span>level &gt;= MAX_LEVEL) <span class="kw">return</span>
+  <span class="kw">if</span> (<span class="kw">.not.</span> needs_refinement(node, f, tol)) <span class="kw">return</span>
+
+  <span class="kw">allocate</span> (node<span class="op">%</span>child(<span class="nu">0</span>:NCHILD - <span class="nu">1</span>))
+  <span class="kw">do</span> ic = <span class="nu">0</span>, NCHILD - <span class="nu">1</span>
+    ix = <span class="bu">mod</span>(ic, <span class="nu">2</span>)   <span class="co">! bit 0: -x (0) or +x (1)</span>
+    iy = ic / <span class="nu">2</span>       <span class="co">! bit 1: -y (0) or +y (1)</span>
+    <span class="kw">associate</span> (c <span class="op">=&gt;</span> node<span class="op">%</span>child(ic))
+      c<span class="op">%</span>level = node<span class="op">%</span>level + <span class="nu">1</span>
+      c<span class="op">%</span>h  = <span class="nu">0.5_dp</span>*node<span class="op">%</span>h
+      c<span class="op">%</span>x0 = node<span class="op">%</span>x0 + ix*c<span class="op">%</span>h
+      c<span class="op">%</span>y0 = node<span class="op">%</span>y0 + iy*c<span class="op">%</span>h
+      <span class="kw">call</span> <span class="nm">refine</span>(c, f, tol)
+    <span class="kw">end</span> <span class="kw">associate</span>
+  <span class="kw">end</span> <span class="kw">do</span>
+<span class="kw">end</span> <span class="kw">subroutine</span> <span class="nm">refine</span></code></pre></div>
+<p>The function for the single tree is a Gaussian bump on the unit
+square, centred at (0.35, 0.60) with sigma = 0.15, mapped with tol =
+0.10:</p>
+<div class="codeblock lang-fortran"><span class="lang">Fortran</span><pre class="code"><code><span class="kw">pure</span> <span class="kw">function</span> <span class="nm">bump_unit</span>(x, y) <span class="kw">result</span>(f)
+  <span class="ty">real</span>(dp), <span class="at">intent</span>(<span class="at">in</span>) <span class="op">::</span> x, y
+  <span class="ty">real</span>(dp) <span class="op">::</span> f
+  <span class="ty">real</span>(dp), <span class="at">parameter</span> <span class="op">::</span> xc = <span class="nu">0.35_dp</span>, yc = <span class="nu">0.60_dp</span>, sigma = <span class="nu">0.15_dp</span>
+  f = <span class="bu">exp</span>(-((x - xc)**<span class="nu">2</span> + (y - yc)**<span class="nu">2</span>) / (<span class="nu">2</span>*sigma**<span class="nu">2</span>))
+<span class="kw">end</span> <span class="kw">function</span> <span class="nm">bump_unit</span></code></pre></div>
+<p>Printing the tree in the order it was built shows the depth-first
+structure. Each label is the path of child indices from the root, so
+<code>02</code> is child 2 of child 0; <code>+</code> marks a refined
+node. These are the first lines of the program’s output:</p>
+<div class="codeblock lang-text"><span class="lang">Output</span><pre class="code"><code>+ root  level 0  f(centre) =  0.48567  refined
+  + 0  level 1  f(centre) =  0.05263  refined
+    - 00  level 2  f(centre) =  0.00216
+    - 01  level 2  f(centre) =  0.00655
+    + 02  level 2  f(centre) =  0.10540  refined
+      - 020  level 3  f(centre) =  0.02538
+      - 021  level 3  f(centre) =  0.08860
+      - 022  level 3  f(centre) =  0.08860
+      - 023  level 3  f(centre) =  0.30925
+    + 03  level 2  f(centre) =  0.32017  refined
+      - 030  level 3  f(centre) =  0.15442
+      ...</code></pre></div>
+<p>Painting each of the 8 x 8 finest cells with the level of the leaf
+that covers it shows where the refinement went. The level-3 region sits
+over the bump, toward the upper left:</p>
+<div class="codeblock lang-text"><span class="lang">Output</span><pre class="code"><code> 3 3 3 3 3 3 2 2
+ 3 3 3 3 3 3 2 2
+ 3 3 3 3 3 3 2 2
+ 3 3 3 3 3 3 2 2
+ 3 3 3 3 3 3 2 2
+ 3 3 3 3 3 3 2 2
+ 2 2 2 2 2 2 2 2
+ 2 2 2 2 2 2 2 2</code></pre></div>
+<p>The same refinement, drawn level by level. Dots are the five samples
+tested in each cell, and grey cells are the ones whose samples spread by
+more than tol, so they split. The code builds depth first rather than
+level by level, but it ends with the same mesh.</p>
+<figure>
+<img loading="lazy" src="figures/refinement_steps.svg"
+alt="Refinement of the single tree, level by level" />
+<figcaption aria-hidden="true">Refinement of the single tree, level by
+level</figcaption>
+</figure>
+<p>The tree has 57 cells: 1 at level 0, 4 at level 1, 16 at level 2 and
+36 at level 3, of which 43 are leaves.</p>
+<p>Fully resolved, each leaf coloured by f at its centre through the
+perceptually uniform viridis colour map, on a scale covering the range
+of f, 0 to 1:</p>
+<figure>
+<img loading="lazy" src="figures/single_tree_field.svg"
+alt="Leaves of the single tree coloured by f" />
+<figcaption aria-hidden="true">Leaves of the single tree coloured by
+f</figcaption>
+</figure>
+<h2 id="part-2-from-depth-first-to-breadth-first">Part 2: from depth
+first to breadth first</h2>
+<p>vtkHyperTreeGrid does not store pointers or a pre-order walk. It
+stores each tree level by level: all vertices at depth 0, then all at
+depth 1, and so on, with each refined vertex’s four children kept
+together in child order. Three arrays describe one tree completely:</p>
+<ul>
+<li><strong>Descriptor:</strong> one bit per vertex in breadth-first
+order, 1 = refined, 0 = leaf. The deepest level is left out, because
+nothing there can be refined.</li>
+<li><strong>NumberOfVerticesPerDepth:</strong> how many vertices sit at
+each depth, refined and leaf alike.</li>
+<li><strong>Cell values:</strong> one value per vertex, in the same
+breadth-first order.</li>
+</ul>
+<p>The conversion does not need a queue. Within one depth, a depth-first
+walk meets the vertices left to right, in exactly the order a
+breadth-first walk would. So we walk depth first, as we built the tree,
+and append each vertex to a list for its own depth; concatenating the
+lists gives the breadth-first layout. This is the same approach VTK
+takes in
+<code>vtkHyperTree::ComputeBreadthFirstOrderDescriptor</code>.</p>
+<div class="codeblock lang-fortran"><span class="lang">Fortran</span><pre class="code"><code><span class="kw">type</span> <span class="op">::</span> <span class="nm">depth_bucket</span>
+  <span class="ty">logical</span>,  <span class="at">allocatable</span> <span class="op">::</span> refined(:)
+  <span class="ty">real</span>(dp), <span class="at">allocatable</span> <span class="op">::</span> <span class="at">value</span>(:)
+<span class="kw">end</span> <span class="kw">type</span> <span class="nm">depth_bucket</span>
+
+<span class="kw">recursive</span> <span class="kw">subroutine</span> <span class="nm">collect</span>(node, b)
+  <span class="ty">type</span>(qnode), <span class="at">intent</span>(<span class="at">in</span>) <span class="op">::</span> node
+  <span class="ty">type</span>(depth_bucket), <span class="at">intent</span>(<span class="at">inout</span>) <span class="op">::</span> b(<span class="nu">0</span>:)
+  <span class="ty">integer</span> <span class="op">::</span> ic
+  b(node<span class="op">%</span>level)<span class="op">%</span>value   = [b(node<span class="op">%</span>level)<span class="op">%</span>value, node<span class="op">%</span>value]
+  b(node<span class="op">%</span>level)<span class="op">%</span>refined = [b(node<span class="op">%</span>level)<span class="op">%</span>refined, <span class="bu">allocated</span>(node<span class="op">%</span>child)]
+  <span class="kw">if</span> (<span class="bu">allocated</span>(node<span class="op">%</span>child)) <span class="kw">then</span>
+    <span class="kw">do</span> ic = <span class="nu">0</span>, NCHILD - <span class="nu">1</span>
+      <span class="kw">call</span> <span class="nm">collect</span>(node<span class="op">%</span>child(ic), b)
+    <span class="kw">end</span> <span class="kw">do</span>
+  <span class="kw">end</span> <span class="kw">if</span>
+<span class="kw">end</span> <span class="kw">subroutine</span> <span class="nm">collect</span></code></pre></div>
+<div class="codeblock lang-fortran"><span class="lang">Fortran</span><pre class="code"><code><span class="kw">function</span> <span class="nm">to_breadth_first</span>(root) <span class="kw">result</span>(bf)
+  <span class="ty">type</span>(qnode), <span class="at">intent</span>(<span class="at">in</span>) <span class="op">::</span> root
+  <span class="ty">type</span>(htree_bf) <span class="op">::</span> bf
+  <span class="ty">type</span>(depth_bucket) <span class="op">::</span> b(<span class="nu">0</span>:MAX_LEVEL)
+  <span class="ty">integer</span> <span class="op">::</span> d
+
+  <span class="kw">do</span> d = <span class="nu">0</span>, MAX_LEVEL
+    <span class="kw">allocate</span> (b(d)<span class="op">%</span>refined(<span class="nu">0</span>), b(d)<span class="op">%</span>value(<span class="nu">0</span>))
+  <span class="kw">end</span> <span class="kw">do</span>
+  <span class="kw">call</span> <span class="nm">collect</span>(root, b)
+
+  bf<span class="op">%</span>depth = <span class="bu">count</span>([(<span class="bu">size</span>(b(d)<span class="op">%</span>value) &gt; <span class="nu">0</span>, d = <span class="nu">0</span>, MAX_LEVEL)])
+  <span class="kw">allocate</span> (bf<span class="op">%</span>nverts_per_depth(<span class="nu">0</span>), bf<span class="op">%</span>descriptor(<span class="nu">0</span>), bf<span class="op">%</span>values(<span class="nu">0</span>))
+  <span class="kw">do</span> d = <span class="nu">0</span>, bf<span class="op">%</span>depth - <span class="nu">1</span>
+    bf<span class="op">%</span>nverts_per_depth = [bf<span class="op">%</span>nverts_per_depth, <span class="bu">size</span>(b(d)<span class="op">%</span>value)]
+    bf<span class="op">%</span>values = [bf<span class="op">%</span>values, b(d)<span class="op">%</span>value]
+    <span class="co">! The deepest level is never refined, so it is left out.</span>
+    <span class="kw">if</span> (d &lt; bf<span class="op">%</span>depth - <span class="nu">1</span>) bf<span class="op">%</span>descriptor = [bf<span class="op">%</span>descriptor, b(d)<span class="op">%</span>refined]
+  <span class="kw">end</span> <span class="kw">do</span>
+<span class="kw">end</span> <span class="kw">function</span> <span class="nm">to_breadth_first</span></code></pre></div>
+<p>The growing arrays use reallocation on assignment, which is fine at
+tutorial sizes; a production writer would count first and fill
+preallocated arrays. For the single tree of Part 1 the program
+prints:</p>
+<div class="codeblock lang-text"><span class="lang">Output</span><pre class="code"><code>depth (levels present)    : 4
+NumberOfVerticesPerDepth  : 1 4 16 36
+total vertices (cells)    : 57
+leaves                    : 43
+descriptor bits           : 21  (deepest level omitted)
+  depth 0: 1
+  depth 1: 1111
+  depth 2: 0011001011111010
+descriptor bytes (hex)    : F9 97 D0</code></pre></div>
+<p>Reading the depth-2 bits in groups of four gives the children of each
+level-1 vertex in turn: <code>0011</code> says children 02 and 03 are
+refined, <code>0010</code> says only 12 is, <code>1111</code> refines
+all of 20 to 23, and <code>1010</code> refines 30 and 32. Those match
+the depth-first listing in Part 1 line for line. The counts check
+themselves too: four refined vertices at depth 1 give 16 at depth 2, and
+nine refined vertices at depth 2 give 36 at depth 3.</p>
+<p>The whole tree makes the mapping visible. The grey number beside each
+node is the order the depth-first build visits it; the number inside is
+its breadth-first storage index. Reading each row left to right gives
+that depth’s descriptor bits.</p>
+<figure>
+<img loading="lazy" src="figures/single_tree_diagram.svg"
+alt="The single quadtree with depth-first and breadth-first indices" />
+<figcaption aria-hidden="true">The single quadtree with depth-first and
+breadth-first indices</figcaption>
+</figure>
+<p>On disk the descriptor is a packed bit array. vtkBitArray puts bit k
+in byte k/8 under the mask <code>0x80 &gt;&gt; (k % 8)</code>, so the
+first bit is the most significant bit of the first byte. Packed that
+way, the 21 bits become the three bytes <code>F9 97 D0</code>, the last
+one padded with zeros.</p>
+<div class="codeblock lang-fortran"><span class="lang">Fortran</span><pre class="code"><code><span class="kw">pure</span> <span class="kw">function</span> <span class="nm">pack_bits_msb_first</span>(bits) <span class="kw">result</span>(bytes)
+  <span class="ty">logical</span>, <span class="at">intent</span>(<span class="at">in</span>) <span class="op">::</span> bits(:)
+  <span class="ty">integer</span>, <span class="at">allocatable</span> <span class="op">::</span> bytes(:)
+  <span class="ty">integer</span> <span class="op">::</span> k
+  <span class="kw">allocate</span> (bytes((<span class="bu">size</span>(bits) + <span class="nu">7</span>)/<span class="nu">8</span>), source=<span class="nu">0</span>)
+  <span class="kw">do</span> k = <span class="nu">0</span>, <span class="bu">size</span>(bits) - <span class="nu">1</span>
+    <span class="kw">if</span> (bits(k + <span class="nu">1</span>)) bytes(k/<span class="nu">8</span> + <span class="nu">1</span>) = <span class="bu">ior</span>(bytes(k/<span class="nu">8</span> + <span class="nu">1</span>), <span class="bu">ishft</span>(<span class="nu">128</span>, -<span class="bu">mod</span>(k, <span class="nu">8</span>)))
+  <span class="kw">end</span> <span class="kw">do</span>
+<span class="kw">end</span> <span class="kw">function</span> <span class="nm">pack_bits_msb_first</span></code></pre></div>
+<p>As a cross-check, the module also has the textbook conversion, a FIFO
+queue of node pointers (<code>to_breadth_first_queue</code>). The
+program compares the two and runs a consistency test on the counts; all
+three checks print <code>T</code>.</p>
+<h2 id="part-3-a-forest-of-quadtrees"><a class="anchor" href="#part-3-a-forest-of-quadtrees" aria-hidden="true">#</a>Part 3: a forest of quadtrees</h2>
+<p>A vtkHyperTreeGrid is a coarse rectilinear grid with one tree rooted
+in each coarse cell. Nothing about a single tree changes; the forest
+only adds a coarse grid and a rule for numbering the roots. Here the
+coarse grid is 4 x 2 unit cells over [0, 4] x [0, 2], and the bump moves
+to (1.30, 0.85) with sigma = 0.35 so that it straddles several root
+cells and leaves the right-hand column untouched.</p>
+<p>The coarse grid is given by point coordinates, so
+<code>Dimensions</code> counts points and the number of root cells per
+axis is one less. VTK’s default root indexing (TransposedRootIndexing
+off) runs i fastest: tree index t = i + nx*j for a 2D grid.</p>
+<figure>
+<img loading="lazy" src="figures/root_indexing.svg"
+alt="Root cells of the forest and their tree indices, t = i + nx times j" />
+<figcaption aria-hidden="true">Root cells of the forest and their tree
+indices, t = i + nx times j</figcaption>
+</figure>
+<div class="codeblock lang-fortran"><span class="lang">Fortran</span><pre class="code"><code><span class="ty">integer</span>, <span class="at">parameter</span> <span class="op">::</span> nx = <span class="nu">4</span>, ny = <span class="nu">2</span>            <span class="co">! root cells per direction</span>
+<span class="ty">integer</span>, <span class="at">parameter</span> <span class="op">::</span> ntrees = nx*ny
+<span class="ty">real</span>(dp) <span class="op">::</span> xcoords(nx + <span class="nu">1</span>), ycoords(ny + <span class="nu">1</span>)
+<span class="ty">type</span>(qnode)    <span class="op">::</span> trees(<span class="nu">0</span>:ntrees - <span class="nu">1</span>)
+<span class="ty">type</span>(htree_bf) <span class="op">::</span> bf(<span class="nu">0</span>:ntrees - <span class="nu">1</span>)
+
+xcoords = [(<span class="ty">real</span>(i, dp), i = <span class="nu">0</span>, nx)]
+ycoords = [(<span class="ty">real</span>(j, dp), j = <span class="nu">0</span>, ny)]
+
+<span class="kw">do</span> j = <span class="nu">0</span>, ny - <span class="nu">1</span>
+  <span class="kw">do</span> i = <span class="nu">0</span>, nx - <span class="nu">1</span>
+    t = i + nx*j
+    trees(t) = make_root(xcoords(i + <span class="nu">1</span>), ycoords(j + <span class="nu">1</span>), xcoords(i + <span class="nu">2</span>) - xcoords(i + <span class="nu">1</span>))
+    <span class="kw">call</span> <span class="nm">refine</span>(trees(t), bump_forest, tol)
+  <span class="kw">end</span> <span class="kw">do</span>
+<span class="kw">end</span> <span class="kw">do</span></code></pre></div>
+<p>The leaf-level map of the whole forest, with <code>|</code> and
+<code>-</code> marking the root cell boundaries, shows the refinement
+crossing tree boundaries smoothly. Each tree refines on its own, and
+nothing enforces a 2:1 balance criterion, either within a tree or across
+root cell boundaries. The end state is unbalanced: a level-1 leaf can
+sit next to level-3 leaves inside trees 0, 2 and 4, and across the root
+boundary at x = 2, level-3 leaves in tree 1 touch a level-1 leaf in tree
+2. The breadth-first layout below does not depend on balance, but a more
+fully featured implementation would enforce it (see the caveats).</p>
+<div class="codeblock lang-text"><span class="lang">Output</span><pre class="code"><code>1 1 1 1 2 2 2 2|2 2 2 2 2 2 2 2|1 1 1 1 1 1 1 1|0 0 0 0 0 0 0 0
+1 1 1 1 2 2 2 2|2 2 2 2 2 2 2 2|1 1 1 1 1 1 1 1|0 0 0 0 0 0 0 0
+1 1 1 1 2 2 3 3|3 3 3 3 3 3 2 2|1 1 1 1 1 1 1 1|0 0 0 0 0 0 0 0
+1 1 1 1 2 2 3 3|3 3 3 3 3 3 2 2|1 1 1 1 1 1 1 1|0 0 0 0 0 0 0 0
+1 1 1 1 3 3 3 3|3 3 3 3 3 3 3 3|2 2 2 2 1 1 1 1|0 0 0 0 0 0 0 0
+1 1 1 1 3 3 3 3|3 3 3 3 3 3 3 3|2 2 2 2 1 1 1 1|0 0 0 0 0 0 0 0
+1 1 1 1 3 3 3 3|3 3 3 3 3 3 3 3|3 3 2 2 1 1 1 1|0 0 0 0 0 0 0 0
+1 1 1 1 3 3 3 3|3 3 3 3 3 3 3 3|3 3 2 2 1 1 1 1|0 0 0 0 0 0 0 0
+----------------------------------------------------------------
+1 1 1 1 3 3 3 3|3 3 3 3 3 3 3 3|3 3 2 2 1 1 1 1|0 0 0 0 0 0 0 0
+1 1 1 1 3 3 3 3|3 3 3 3 3 3 3 3|3 3 2 2 1 1 1 1|0 0 0 0 0 0 0 0
+1 1 1 1 3 3 3 3|3 3 3 3 3 3 3 3|3 3 2 2 1 1 1 1|0 0 0 0 0 0 0 0
+1 1 1 1 3 3 3 3|3 3 3 3 3 3 3 3|3 3 2 2 1 1 1 1|0 0 0 0 0 0 0 0
+1 1 1 1 3 3 3 3|3 3 3 3 3 3 3 3|1 1 1 1 1 1 1 1|0 0 0 0 0 0 0 0
+1 1 1 1 3 3 3 3|3 3 3 3 3 3 3 3|1 1 1 1 1 1 1 1|0 0 0 0 0 0 0 0
+1 1 1 1 2 2 3 3|3 3 3 3 3 3 2 2|1 1 1 1 1 1 1 1|0 0 0 0 0 0 0 0
+1 1 1 1 2 2 3 3|3 3 3 3 3 3 2 2|1 1 1 1 1 1 1 1|0 0 0 0 0 0 0 0</code></pre></div>
+<p>Drawn, with thick lines for the root cell boundaries, then fully
+resolved and coloured by f on the same 0 to 1 viridis scale:</p>
+<figure>
+<img loading="lazy" src="figures/forest_mesh.svg" alt="Leaf cells of the forest" />
+<figcaption aria-hidden="true">Leaf cells of the forest</figcaption>
+</figure>
+<figure>
+<img loading="lazy" src="figures/forest_field.svg"
+alt="Leaves of the forest coloured by f" />
+<figcaption aria-hidden="true">Leaves of the forest coloured by
+f</figcaption>
+</figure>
+<p>Each tree is converted to breadth-first form exactly as in Part 2.
+Trees 3 and 7 are a single leaf root, so they have depth 1 and no
+descriptor bits at all.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr class="header">
+<th>Tree</th>
+<th>(i, j)</th>
+<th>Depth</th>
+<th>Vertices per depth</th>
+<th>Descriptor, by depth</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>(0, 0)</td>
+<td>4</td>
+<td>1 4 8 28</td>
+<td>1 0101 01111111</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>(1, 0)</td>
+<td>4</td>
+<td>1 4 16 60</td>
+<td>1 1111 1111101111111111</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>(2, 0)</td>
+<td>4</td>
+<td>1 4 4 8</td>
+<td>1 0010 1010</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td>(3, 0)</td>
+<td>1</td>
+<td>1</td>
+<td>none</td>
+</tr>
+<tr class="odd">
+<td>4</td>
+<td>(0, 1)</td>
+<td>4</td>
+<td>1 4 8 20</td>
+<td>1 0101 11110100</td>
+</tr>
+<tr class="even">
+<td>5</td>
+<td>(1, 1)</td>
+<td>4</td>
+<td>1 4 16 44</td>
+<td>1 1111 1111111111001000</td>
+</tr>
+<tr class="odd">
+<td>6</td>
+<td>(2, 1)</td>
+<td>4</td>
+<td>1 4 4 4</td>
+<td>1 1000 1000</td>
+</tr>
+<tr class="even">
+<td>7</td>
+<td>(3, 1)</td>
+<td>1</td>
+<td>1</td>
+<td>none</td>
+</tr>
+</tbody>
+</table></div>
+<p>The grid-wide arrays are the per-tree arrays concatenated in TreeIds
+order. The offset of each tree’s first cell in the cell-data array is
+the running total of the cells before it; that is the start index VTK’s
+implicit global indexing uses
+(<code>vtkHyperTree::SetGlobalIndexStart</code>).</p>
+<div class="codeblock lang-fortran"><span class="lang">Fortran</span><pre class="code"><code><span class="kw">allocate</span> (tree_ids(<span class="nu">0</span>), depth_per_tree(<span class="nu">0</span>), nverts(<span class="nu">0</span>), global_start(<span class="nu">0</span>), &amp;
+          descriptors(<span class="nu">0</span>), cell_data(<span class="nu">0</span>))
+<span class="kw">do</span> t = <span class="nu">0</span>, ntrees - <span class="nu">1</span>
+  tree_ids       = [tree_ids, t]
+  depth_per_tree = [depth_per_tree, bf(t)<span class="op">%</span>depth]
+  nverts         = [nverts, bf(t)<span class="op">%</span>nverts_per_depth]
+  global_start   = [global_start, <span class="bu">size</span>(cell_data)]    <span class="co">! 0-based offset</span>
+  descriptors    = [descriptors, bf(t)<span class="op">%</span>descriptor]
+  cell_data      = [cell_data, bf(t)<span class="op">%</span>values]
+<span class="kw">end</span> <span class="kw">do</span></code></pre></div>
+<div class="codeblock lang-text"><span class="lang">Output</span><pre class="code"><code>Dimensions (points)        : 5 3 1
+XCoordinates               :  0.0  1.0  2.0  3.0  4.0
+YCoordinates               :  0.0  1.0  2.0
+BranchFactor               : 2
+TreeIds                    : 0 1 2 3 4 5 6 7
+DepthPerTree               : 4 4 4 1 4 4 4 1
+NumberOfVerticesPerDepth   : 1 4 8 28 1 4 16 60 1 4 4 8 1 1 4 8 20 1 4 16 44 1 4 4 4 1
+Descriptors                : 86 bits
+  10101011111111111111111011111111111001010101010111110100111111111111111001000110001000
+  packed, MSB first (hex)  : AB FF FE FF E5 55 F4 FF FE 46 20
+GlobalIndexStart per tree  : 0 41 122 139 140 173 238 251
+NumberOfCells (cell data)  : 252
+leaves                     : 191</code></pre></div>
+<p>The sum of DepthPerTree (26) is the length of
+NumberOfVerticesPerDepth, which is how a reader splits the concatenated
+counts back into trees, and from those counts it knows how many
+descriptor bits each tree owns. As a last check, the program reads back
+the root value of tree 1 at <code>cell_data(global_start(2) + 1)</code>
+(Fortran is 1-based) and gets 0.51517, which equals f at the centre of
+root cell (1, 0).</p>
+<p>These names match what VTK itself writes. The XML HyperTreeGrid
+writer (format version 2) emits a <code>Trees</code> element holding
+<code>Descriptors</code>, <code>NumberOfVerticesPerDepth</code>,
+<code>TreeIds</code> and <code>DepthPerTree</code>, followed by
+<code>CellData</code> in this same per-tree breadth-first order. The
+vtkHDF format stores the same information as <code>Descriptors</code>,
+<code>DescriptorsSize</code> (in bits), <code>TreeIds</code>,
+<code>DepthPerTree</code> and <code>NumberOfCellsPerTreeDepth</code>,
+plus the root attributes <code>BranchFactor</code> and
+<code>Dimensions</code>; it also requires each piece’s descriptor bits
+to start on a fresh byte.</p>
+<h2 id="running-it"><a class="anchor" href="#running-it" aria-hidden="true">#</a>Running it</h2>
+<p>Any Fortran 2008 compiler should do; this was built and run with
+gfortran 13.3.0 on Linux, with <code>-std=f2018 -Wall</code> and,
+separately, with <code>-fcheck=all</code> for bounds checking. Both
+builds were clean and gave the same output.</p>
+<div class="codeblock lang-bash"><span class="lang">Shell</span><pre class="code"><code><span class="kw">make</span> run        <span class="co">  # builds single_tree and forest, then runs both</span>
+<span class="co"># or by hand:</span>
+<span class="kw">gfortran</span> <span class="at">-std=f2018</span> <span class="at">-Wall</span> <span class="at">-c</span> quadtree_mod.f90 field_mod.f90
+<span class="kw">gfortran</span> <span class="at">-std=f2018</span> <span class="at">-Wall</span> single_tree.f90 quadtree_mod.o field_mod.o <span class="at">-o</span> single_tree
+<span class="kw">gfortran</span> <span class="at">-std=f2018</span> <span class="at">-Wall</span> forest.f90 quadtree_mod.o field_mod.o <span class="at">-o</span> forest
+<span class="nm">./single_tree</span>
+<span class="nm">./forest</span></code></pre></div>
+<p>The full output of both programs is saved next to the sources as
+<code>single_tree_output.txt</code> and <code>forest_output.txt</code>.
+The single-tree program ends with its three checks:</p>
+<div class="codeblock lang-text"><span class="lang">Output</span><pre class="code"><code>== Checks ==
+layout is self-consistent         : T
+bucket walk == FIFO queue (bits)  : T
+bucket walk == FIFO queue (values): T</code></pre></div>
+<p>The forest program stops with <code>error stop</code> if any tree
+fails the same consistency check, so reaching the global arrays means
+all eight trees passed.</p>
+<p>The figures come from the same code. <code>export_cells</code> writes
+every cell of both examples to <code>cells_single.txt</code> and
+<code>cells_forest.txt</code>, and <code>make_figures.py</code>, which
+needs only Python’s standard library, draws the SVGs from them.
+<code>make figures</code> runs both. <code>make site</code> turns this
+tutorial into the styled web page in <code>docs/</code>, ready for
+GitHub Pages; it needs pandoc and Python’s standard library.</p>
+<h2 id="caveats-and-limits"><a class="anchor" href="#caveats-and-limits" aria-hidden="true">#</a>Caveats and limits</h2>
+<p>The refinement test is deliberately naive and this example only works
+because the function was chosen to suit it. Five samples per cell cannot
+see a feature narrower than the cell. Swap the bump for one with sigma =
+0.02 centred at (0.3, 0.3) and all five root samples fall below 1e-40,
+so the spread is zero, the root is never refined and the peak disappears
+from the map entirely. Robust function mapping needs more than this:
+oversampling, gradient or curvature estimates, a priori knowledge of
+feature scales, or refinement driven by the simulation itself. None of
+that is attempted here.</p>
+<p>Other things this example leaves out on purpose:</p>
+<ul>
+<li><strong>Mask:</strong> no cells are blanked. vtkHyperTreeGrid allows
+an optional bit mask over leaves, which a real writer may need.</li>
+<li><strong>Balance:</strong> nothing enforces a 2:1 balance criterion,
+within a tree or across root boundaries, and the forest’s end state is
+unbalanced. A more fully featured implementation would refine any leaf
+whose face neighbour is more than one level finer, and let that
+refinement ripple across root boundaries into neighbouring trees, which
+needs neighbour lookup between trees as well as within them.</li>
+<li><strong>Refined-cell values:</strong> a refined cell’s value is f at
+its centre, not an average of its children. A writer for simulation data
+would choose its own rule.</li>
+<li><strong>Pieces and I/O:</strong> there is one piece and no file is
+written. vtkHDF also asks each piece’s descriptor and mask bits to start
+on a new byte.</li>
+<li><strong>Performance:</strong> arrays grow by reallocation on
+assignment, which is quadratic. A production writer would count vertices
+per depth first and fill preallocated arrays.</li>
+</ul>
+<p>What was checked, and what was not. The child ordering, the
+descriptor rules, the bit packing, the per-depth vertex counts, the root
+indexing and the XML v2 array names were taken from VTK’s documentation
+and source (listed below). The programs check their own arrays for
+consistency and compare two independent conversions. The arrays were not
+loaded into VTK or ParaView. The statement that vtkHDF cell data follows
+the same per-tree breadth-first order is inferred from the XML writer;
+the vtkHDF specification does not spell out the order.</p>
+<h2 id="sources"><a class="anchor" href="#sources" aria-hidden="true">#</a>Sources</h2>
+<p>Read on 14 Nov 2026.</p>
+<ul>
+<li><a
+href="https://vtk.org/doc/nightly/html/classvtkHyperTreeGrid.html">vtkHyperTreeGrid
+class reference</a>: Dimensions as points, i-fastest cell order.</li>
+<li><a
+href="https://vtk.org/doc/nightly/html/classvtkHyperTree.html">vtkHyperTree
+class reference</a>: child numbering, bit 0 for x and bit 1 for y.</li>
+<li><a
+href="https://docs.vtk.org/en/latest/vtk_file_formats/vtkhdf_file_format/vtkhdf_specifications.html">vtkHDF
+file format specification</a>: HyperTreeGrid datasets, descriptor and
+mask rules.</li>
+<li><a
+href="https://github.com/Kitware/VTK/blob/master/Common/DataModel/vtkHyperTree.cxx">vtkHyperTree.cxx</a>:
+<code>ComputeBreadthFirstOrderDescriptor</code> and
+<code>BuildFromBreadthFirstOrderDescriptor</code>.</li>
+<li><a
+href="https://github.com/Kitware/VTK/blob/master/Common/DataModel/vtkHyperTreeGrid.cxx">vtkHyperTreeGrid.cxx</a>:
+<code>GetIndexFromLevelZeroCoordinates</code>, the root index
+formula.</li>
+<li><a
+href="https://github.com/Kitware/VTK/blob/master/Common/Core/vtkBitArray.h">vtkBitArray.h</a>:
+<code>SetValue</code> and the <code>0x80 &gt;&gt; bit</code> mask.</li>
+<li><a
+href="https://github.com/Kitware/VTK/blob/master/IO/XML/vtkXMLHyperTreeGridWriter.cxx">vtkXMLHyperTreeGridWriter.cxx</a>:
+format version 2 array names and cell-data order.</li>
+</ul>
+  </main>
+</div>
+<footer class="colophon">
+  <p>Built from <code>TUTORIAL.md</code> with <code>make site</code>. Figures drawn from the program output by <code>make_figures.py</code>.</p>
+</footer>
+<script>
+document.querySelectorAll('pre.code').forEach(function (pre) {
+  var btn = document.createElement('button');
+  btn.className = 'copy';
+  btn.type = 'button';
+  btn.textContent = 'Copy';
+  btn.addEventListener('click', function () {
+    var text = pre.querySelector('code').innerText;
+    navigator.clipboard.writeText(text).then(function () {
+      btn.textContent = 'Copied';
+      setTimeout(function () { btn.textContent = 'Copy'; }, 1400);
+    });
+  });
+  pre.parentNode.appendChild(btn);
+});
+</script>
+</body>
+</html>

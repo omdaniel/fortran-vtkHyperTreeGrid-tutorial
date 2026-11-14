@@ -1,0 +1,16 @@
+# Build artefacts
+*.o
+*.mod
+*.smod
+single_tree
+forest
+export_cells
+
+# Python
+__pycache__/
+*.pyc
+
+# Editors and OS
+.DS_Store
+*.swp
+*~
