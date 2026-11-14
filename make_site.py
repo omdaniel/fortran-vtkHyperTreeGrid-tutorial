@@ -18,7 +18,7 @@ HERE = Path(__file__).resolve().parent
 OUT = HERE / "docs"
 SITE = HERE / "site"
 
-TITLE = "Adaptive quadtrees in modern Fortran"
+TITLE = "Naive adaptive quadtrees in modern Fortran"
 SUBTITLE = "From depth-first to vtkHyperTreeGrid"
 DESCRIPTION = ("Build an adaptive quadtree depth first, grow it into a forest of "
                "quadtrees, and lay it out breadth first, the way vtkHyperTreeGrid stores it.")

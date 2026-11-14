@@ -1,4 +1,4 @@
-# Adaptive quadtrees in modern Fortran: from depth-first to vtkHyperTreeGrid
+# Naive adaptive quadtrees in modern Fortran: from depth-first to vtkHyperTreeGrid
 
 ## Overview
 

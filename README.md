@@ -2,7 +2,7 @@
 
 **Read it online: [omdaniel.github.io/fortran-vtkHyperTreeGrid-tutorial](https://omdaniel.github.io/fortran-vtkHyperTreeGrid-tutorial/)**
 
-Adaptive quadtrees in modern Fortran: depth first to vtkHyperTreeGrid.
+Naive adaptive quadtrees in modern Fortran: depth first to vtkHyperTreeGrid.
 
 A small, self-contained tutorial code. It builds an adaptive quadtree depth first
 (recursive refinement of a smooth f(x,y) down to level 3), grows it into a forest of
