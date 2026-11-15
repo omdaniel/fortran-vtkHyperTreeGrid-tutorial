@@ -1,61 +1,37 @@
 == Depth-first (build) order ==
-+ root  level 0  f(centre) =  0.48567  refined
-  + 0  level 1  f(centre) =  0.05263  refined
-    - 00  level 2  f(centre) =  0.00216         
-    - 01  level 2  f(centre) =  0.00655         
-    + 02  level 2  f(centre) =  0.10540  refined
-      - 020  level 3  f(centre) =  0.02538         
-      - 021  level 3  f(centre) =  0.08860         
-      - 022  level 3  f(centre) =  0.08860         
-      - 023  level 3  f(centre) =  0.30925         
-    + 03  level 2  f(centre) =  0.32017  refined
-      - 030  level 3  f(centre) =  0.15442         
-      - 031  level 3  f(centre) =  0.13440         
-      - 032  level 3  f(centre) =  0.53899         
-      - 033  level 3  f(centre) =  0.46910         
-  + 1  level 1  f(centre) =  0.00188  refined
-    - 10  level 2  f(centre) =  0.00124         
-    - 11  level 2  f(centre) =  0.00001         
-    + 12  level 2  f(centre) =  0.06047  refined
-      - 120  level 3  f(centre) =  0.05841         
-      - 121  level 3  f(centre) =  0.01268         
-      - 122  level 3  f(centre) =  0.20387         
-      - 123  level 3  f(centre) =  0.04424         
-    - 13  level 2  f(centre) =  0.00071         
-  + 2  level 1  f(centre) =  0.48567  refined
-    + 20  level 2  f(centre) =  0.32017  refined
-      - 200  level 3  f(centre) =  0.15442         
-      - 201  level 3  f(centre) =  0.53899         
-      - 202  level 3  f(centre) =  0.13440         
-      - 203  level 3  f(centre) =  0.46910         
-    + 21  level 2  f(centre) =  0.97260  refined
-      - 210  level 3  f(centre) =  0.93941         
-      - 211  level 3  f(centre) =  0.81759         
-      - 212  level 3  f(centre) =  0.81759         
-      - 213  level 3  f(centre) =  0.71157         
-    + 22  level 2  f(centre) =  0.06047  refined
-      - 220  level 3  f(centre) =  0.05841         
-      - 221  level 3  f(centre) =  0.20387         
-      - 222  level 3  f(centre) =  0.01268         
-      - 223  level 3  f(centre) =  0.04424         
-    + 23  level 2  f(centre) =  0.18370  refined
-      - 230  level 3  f(centre) =  0.35533         
-      - 231  level 3  f(centre) =  0.30925         
-      - 232  level 3  f(centre) =  0.07711         
-      - 233  level 3  f(centre) =  0.06711         
-  + 3  level 1  f(centre) =  0.01733  refined
-    + 30  level 2  f(centre) =  0.18370  refined
-      - 300  level 3  f(centre) =  0.35533         
-      - 301  level 3  f(centre) =  0.07711         
-      - 302  level 3  f(centre) =  0.30925         
-      - 303  level 3  f(centre) =  0.06711         
-    - 31  level 2  f(centre) =  0.00216         
-    + 32  level 2  f(centre) =  0.03470  refined
-      - 320  level 3  f(centre) =  0.13440         
-      - 321  level 3  f(centre) =  0.02917         
-      - 322  level 3  f(centre) =  0.02917         
-      - 323  level 3  f(centre) =  0.00633         
-    - 33  level 2  f(centre) =  0.00041         
++ root  level 0  f(centre) =  0.00387  refined
+  - 0  level 1  f(centre) =  0.00008         
+  - 1  level 1  f(centre) =  0.00000         
+  + 2  level 1  f(centre) =  0.57375  refined
+    + 20  level 2  f(centre) =  0.16438  refined
+      - 200  level 3  f(centre) =  0.05227         
+      - 201  level 3  f(centre) =  0.07928         
+      - 202  level 3  f(centre) =  0.24084         
+      - 203  level 3  f(centre) =  0.36533         
+    + 21  level 2  f(centre) =  0.09432  refined
+      - 210  level 3  f(centre) =  0.06005         
+      - 211  level 3  f(centre) =  0.02272         
+      - 212  level 3  f(centre) =  0.27673         
+      - 213  level 3  f(centre) =  0.10467         
+    + 22  level 2  f(centre) =  0.87032  refined
+      - 220  level 3  f(centre) =  0.55417         
+      - 221  level 3  f(centre) =  0.84062         
+      - 222  level 3  f(centre) =  0.63674         
+      - 223  level 3  f(centre) =  0.96587         
+    + 23  level 2  f(centre) =  0.49935  refined
+      - 230  level 3  f(centre) =  0.63674         
+      - 231  level 3  f(centre) =  0.24084         
+      - 232  level 3  f(centre) =  0.73162         
+      - 233  level 3  f(centre) =  0.27673         
+  + 3  level 1  f(centre) =  0.00073  refined
+    - 30  level 2  f(centre) =  0.00336         
+    - 31  level 2  f(centre) =  0.00001         
+    + 32  level 2  f(centre) =  0.01781  refined
+      - 320  level 3  f(centre) =  0.04549         
+      - 321  level 3  f(centre) =  0.00429         
+      - 322  level 3  f(centre) =  0.05227         
+      - 323  level 3  f(centre) =  0.00493         
+    - 33  level 2  f(centre) =  0.00004         
 
 == Leaf cells, labelled by level (y up, x right) ==
 +---+---+---+---+---+---+-------+
@@ -63,36 +39,35 @@
 +---+---+---+---+---+---+   2   |
 | 3 | 3 | 3 | 3 | 3 | 3 |       |
 +---+---+---+---+---+---+-------+
-| 3 | 3 | 3 | 3 | 3 | 3 |       |
-+---+---+---+---+---+---+   2   |
-| 3 | 3 | 3 | 3 | 3 | 3 |       |
-+---+---+---+---+---+---+-------+
-| 3 | 3 | 3 | 3 | 3 | 3 |       |
-+---+---+---+---+---+---+   2   |
-| 3 | 3 | 3 | 3 | 3 | 3 |       |
-+---+---+---+---+---+---+-------+
-|       |       |       |       |
-|   2   |   2   |   2   |   2   |
-|       |       |       |       |
-+-------+-------+-------+-------+
+| 3 | 3 | 3 | 3 |       |       |
++---+---+---+---+   2   |   2   |
+| 3 | 3 | 3 | 3 |       |       |
++---+---+---+---+-------+-------+
+|               |               |
+|               |               |
+|               |               |
+|       1       |       1       |
+|               |               |
+|               |               |
+|               |               |
++---------------+---------------+
 
 == Breadth-first (vtkHyperTreeGrid) layout ==
 depth (levels present)    : 4
-NumberOfVerticesPerDepth  : 1 4 16 36
-total cells               : 57
-leaves                    : 43
-descriptor bits           : 21  (deepest level omitted)
+NumberOfVerticesPerDepth  : 1 4 8 20
+total cells               : 33
+leaves                    : 25
+descriptor bits           : 13  (deepest level omitted)
   depth 0: 1
-  depth 1: 1111
-  depth 2: 0011001011111010
-descriptor bytes (hex)    : F9 97 D0
+  depth 1: 0011
+  depth 2: 11110010
+descriptor bytes (hex)    : 9F 90
 cell values, breadth first, by depth:
-  depth 0:  0.486
-  depth 1:  0.053  0.002  0.486  0.017
-  depth 2:  0.002  0.007  0.105  0.320  0.001  0.000  0.060  0.001
-           ... (8 more)
-  depth 3:  0.025  0.089  0.089  0.309  0.154  0.134  0.539  0.469
-           ... (28 more)
+  depth 0:  0.004
+  depth 1:  0.000  0.000  0.574  0.001
+  depth 2:  0.164  0.094  0.870  0.499  0.003  0.000  0.018  0.000
+  depth 3:  0.052  0.079  0.241  0.365  0.060  0.023  0.277  0.105
+           ... (12 more)
 
 == Checks ==
 layout is self-consistent         : T

@@ -98,35 +98,35 @@ recursive subroutine refine(node, f, tol)
 end subroutine refine
 ```
 
-The function for the single tree is a Gaussian bump on the unit square, centred at (0.35, 0.60) with sigma = 0.15, mapped with tol = 0.10:
+The function for the single tree is a Gaussian bump on the unit square, centred at (0.20, 0.90) with sigma = 0.15, mapped with tol = 0.10:
 
 ```fortran
 pure function bump_unit(x, y) result(f)
   real(dp), intent(in) :: x, y
   real(dp) :: f
-  real(dp), parameter :: xc = 0.35_dp, yc = 0.60_dp, sigma = 0.15_dp
+  real(dp), parameter :: xc = 0.20_dp, yc = 0.90_dp, sigma = 0.15_dp
   f = exp(-((x - xc)**2 + (y - yc)**2) / (2*sigma**2))
 end function bump_unit
 ```
 
-Printing the tree in the order it was built shows the depth-first structure. Each label is the path of child indices from the root, so `02` is child 2 of child 0; `+` marks a refined node. These are the first lines of the program's output:
+Printing the tree in the order it was built shows the depth-first structure. Each label is the path of child indices from the root, so `20` is child 0 of child 2; `+` marks a refined node. These are the first lines of the program's output:
 
 ```text
-+ root  level 0  f(centre) =  0.48567  refined
-  + 0  level 1  f(centre) =  0.05263  refined
-    - 00  level 2  f(centre) =  0.00216
-    - 01  level 2  f(centre) =  0.00655
-    + 02  level 2  f(centre) =  0.10540  refined
-      - 020  level 3  f(centre) =  0.02538
-      - 021  level 3  f(centre) =  0.08860
-      - 022  level 3  f(centre) =  0.08860
-      - 023  level 3  f(centre) =  0.30925
-    + 03  level 2  f(centre) =  0.32017  refined
-      - 030  level 3  f(centre) =  0.15442
++ root  level 0  f(centre) =  0.00387  refined
+  - 0  level 1  f(centre) =  0.00008
+  - 1  level 1  f(centre) =  0.00000
+  + 2  level 1  f(centre) =  0.57375  refined
+    + 20  level 2  f(centre) =  0.16438  refined
+      - 200  level 3  f(centre) =  0.05227
+      - 201  level 3  f(centre) =  0.07928
+      - 202  level 3  f(centre) =  0.24084
+      - 203  level 3  f(centre) =  0.36533
+    + 21  level 2  f(centre) =  0.09432  refined
+      - 210  level 3  f(centre) =  0.06005
       ...
 ```
 
-Drawing each leaf as a box at its true size, labelled with its level, shows where the refinement went. Each finest (level-3) cell is 4 characters wide and 2 rows tall, so a level-2 leaf covers 2 x 2 of them. The 43 leaves are 36 at level 3, sitting over the bump toward the upper left, and 7 at level 2:
+Drawing each leaf as a box at its true size, labelled with its level, shows where the refinement went. Each finest (level-3) cell is 4 characters wide and 2 rows tall, so a level-2 leaf covers 2 x 2 of them and a level-1 leaf 4 x 4. The 25 leaves are 20 at level 3 over the bump in the upper left, 3 at level 2 around them, and 2 at level 1 along the bottom, where f is almost flat:
 
 ```text
 +---+---+---+---+---+---+-------+
@@ -134,25 +134,25 @@ Drawing each leaf as a box at its true size, labelled with its level, shows wher
 +---+---+---+---+---+---+   2   |
 | 3 | 3 | 3 | 3 | 3 | 3 |       |
 +---+---+---+---+---+---+-------+
-| 3 | 3 | 3 | 3 | 3 | 3 |       |
-+---+---+---+---+---+---+   2   |
-| 3 | 3 | 3 | 3 | 3 | 3 |       |
-+---+---+---+---+---+---+-------+
-| 3 | 3 | 3 | 3 | 3 | 3 |       |
-+---+---+---+---+---+---+   2   |
-| 3 | 3 | 3 | 3 | 3 | 3 |       |
-+---+---+---+---+---+---+-------+
-|       |       |       |       |
-|   2   |   2   |   2   |   2   |
-|       |       |       |       |
-+-------+-------+-------+-------+
+| 3 | 3 | 3 | 3 |       |       |
++---+---+---+---+   2   |   2   |
+| 3 | 3 | 3 | 3 |       |       |
++---+---+---+---+-------+-------+
+|               |               |
+|               |               |
+|               |               |
+|       1       |       1       |
+|               |               |
+|               |               |
+|               |               |
++---------------+---------------+
 ```
 
 The same refinement, drawn level by level. Dots are the five samples tested in each cell, and grey cells are the ones whose samples spread by more than tol, so they split. The code builds depth first rather than level by level, but it ends with the same mesh.
 
 ![Refinement of the single tree, level by level](figures/refinement_steps.svg)
 
-The tree has 57 cells: 1 at level 0, 4 at level 1, 16 at level 2 and 36 at level 3, of which 43 are leaves.
+The tree has 33 cells: 1 at level 0, 4 at level 1, 8 at level 2 and 20 at level 3, of which 25 are leaves.
 
 Fully resolved, each leaf coloured by f at its centre through the perceptually uniform viridis colour map, on a scale covering the range of f, 0 to 1:
 
@@ -215,23 +215,23 @@ The growing arrays use reallocation on assignment, which is fine at tutorial siz
 
 ```text
 depth (levels present)    : 4
-NumberOfVerticesPerDepth  : 1 4 16 36
-total cells               : 57
-leaves                    : 43
-descriptor bits           : 21  (deepest level omitted)
+NumberOfVerticesPerDepth  : 1 4 8 20
+total cells               : 33
+leaves                    : 25
+descriptor bits           : 13  (deepest level omitted)
   depth 0: 1
-  depth 1: 1111
-  depth 2: 0011001011111010
-descriptor bytes (hex)    : F9 97 D0
+  depth 1: 0011
+  depth 2: 11110010
+descriptor bytes (hex)    : 9F 90
 ```
 
-Reading the depth-2 bits in groups of four gives the children of each level-1 cell in turn: `0011` says children 02 and 03 are refined, `0010` says only 12 is, `1111` refines all of 20 to 23, and `1010` refines 30 and 32. Those match the depth-first listing in Part 1 line for line. The counts check themselves too: four refined cells at depth 1 give 16 at depth 2, and nine refined cells at depth 2 give 36 at depth 3.
+Reading the bits by depth retraces the build. At depth 1, `0011` says children 0 and 1 of the root are leaves and 2 and 3 are refined. The depth-2 bits, in groups of four, give the children of those two cells in turn: `1111` refines all of 20 to 23, and `0010` refines only 32. Those match the depth-first listing in Part 1 line for line. The counts check themselves too: two refined cells at depth 1 give 8 at depth 2, and five refined cells at depth 2 give 20 at depth 3.
 
 The whole tree makes the mapping visible. The grey number beside each node is the order the depth-first build visits it; the number inside is its breadth-first storage index. Reading each row left to right gives that depth's descriptor bits.
 
 ![The single quadtree with depth-first and breadth-first indices](figures/single_tree_diagram.svg)
 
-On disk the descriptor is a packed bit array. vtkBitArray puts bit k in byte k/8 under the mask `0x80 >> (k % 8)`, so the first bit is the most significant bit of the first byte. Packed that way, the 21 bits become the three bytes `F9 97 D0`, the last one padded with zeros.
+On disk the descriptor is a packed bit array. vtkBitArray puts bit k in byte k/8 under the mask `0x80 >> (k % 8)`, so the first bit is the most significant bit of the first byte. Packed that way, the 13 bits become the two bytes `9F 90`, the last one padded with zeros.
 
 ```fortran
 pure function pack_bits_msb_first(bits) result(bytes)

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="948" height="326" viewBox="0 0 948 326" role="img" aria-label="Refinement of the single tree, level by level" font-family="Helvetica, Arial, sans-serif" xmlns:c2pa="http://c2pa.org/manifest">
+<svg xmlns="http://www.w3.org/2000/svg" width="948" height="326" viewBox="0 0 948 326" role="img" aria-label="Refinement of the single tree, level by level" font-family="Helvetica, Arial, sans-serif">
 <rect width="948" height="326" fill="#ffffff"/>
 <rect x="20.00" y="20.00" width="200.00" height="200.00" fill="#d0d0d0" stroke="#000000" stroke-width="1.0"/>
 <circle cx="20.00" cy="220.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
@@ -9,8 +9,8 @@
 <rect x="20.00" y="20.00" width="200.00" height="200.00" fill="none" stroke="#000000" stroke-width="2"/>
 <text x="120.00" y="242.00" font-size="13" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif" fill="#000000">level 0</text>
 <text x="120.00" y="260.00" font-size="12" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif" fill="#000000">1 tested, 1 split</text>
-<rect x="256.00" y="120.00" width="100.00" height="100.00" fill="#d0d0d0" stroke="#000000" stroke-width="1.0"/>
-<rect x="356.00" y="120.00" width="100.00" height="100.00" fill="#d0d0d0" stroke="#000000" stroke-width="1.0"/>
+<rect x="256.00" y="120.00" width="100.00" height="100.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+<rect x="356.00" y="120.00" width="100.00" height="100.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
 <rect x="256.00" y="20.00" width="100.00" height="100.00" fill="#d0d0d0" stroke="#000000" stroke-width="1.0"/>
 <rect x="356.00" y="20.00" width="100.00" height="100.00" fill="#d0d0d0" stroke="#000000" stroke-width="1.0"/>
 <circle cx="256.00" cy="220.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
@@ -35,63 +35,17 @@
 <circle cx="406.00" cy="70.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
 <rect x="256.00" y="20.00" width="200.00" height="200.00" fill="none" stroke="#000000" stroke-width="2"/>
 <text x="356.00" y="242.00" font-size="13" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif" fill="#000000">level 1</text>
-<text x="356.00" y="260.00" font-size="12" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif" fill="#000000">4 tested, 4 split</text>
-<rect x="492.00" y="170.00" width="50.00" height="50.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="542.00" y="170.00" width="50.00" height="50.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="492.00" y="120.00" width="50.00" height="50.00" fill="#d0d0d0" stroke="#000000" stroke-width="1.0"/>
-<rect x="542.00" y="120.00" width="50.00" height="50.00" fill="#d0d0d0" stroke="#000000" stroke-width="1.0"/>
-<rect x="592.00" y="170.00" width="50.00" height="50.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="642.00" y="170.00" width="50.00" height="50.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="592.00" y="120.00" width="50.00" height="50.00" fill="#d0d0d0" stroke="#000000" stroke-width="1.0"/>
-<rect x="642.00" y="120.00" width="50.00" height="50.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+<text x="356.00" y="260.00" font-size="12" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif" fill="#000000">4 tested, 2 split</text>
+<rect x="492.00" y="120.00" width="100.00" height="100.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+<rect x="592.00" y="120.00" width="100.00" height="100.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
 <rect x="492.00" y="70.00" width="50.00" height="50.00" fill="#d0d0d0" stroke="#000000" stroke-width="1.0"/>
 <rect x="542.00" y="70.00" width="50.00" height="50.00" fill="#d0d0d0" stroke="#000000" stroke-width="1.0"/>
 <rect x="492.00" y="20.00" width="50.00" height="50.00" fill="#d0d0d0" stroke="#000000" stroke-width="1.0"/>
 <rect x="542.00" y="20.00" width="50.00" height="50.00" fill="#d0d0d0" stroke="#000000" stroke-width="1.0"/>
-<rect x="592.00" y="70.00" width="50.00" height="50.00" fill="#d0d0d0" stroke="#000000" stroke-width="1.0"/>
+<rect x="592.00" y="70.00" width="50.00" height="50.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
 <rect x="642.00" y="70.00" width="50.00" height="50.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
 <rect x="592.00" y="20.00" width="50.00" height="50.00" fill="#d0d0d0" stroke="#000000" stroke-width="1.0"/>
 <rect x="642.00" y="20.00" width="50.00" height="50.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<circle cx="492.00" cy="220.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="542.00" cy="220.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="492.00" cy="170.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="542.00" cy="170.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="517.00" cy="195.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="542.00" cy="220.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="592.00" cy="220.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="542.00" cy="170.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="592.00" cy="170.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="567.00" cy="195.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="492.00" cy="170.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="542.00" cy="170.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="492.00" cy="120.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="542.00" cy="120.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="517.00" cy="145.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="542.00" cy="170.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="592.00" cy="170.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="542.00" cy="120.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="592.00" cy="120.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="567.00" cy="145.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="592.00" cy="220.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="642.00" cy="220.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="592.00" cy="170.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="642.00" cy="170.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="617.00" cy="195.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="642.00" cy="220.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="692.00" cy="220.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="642.00" cy="170.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="692.00" cy="170.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="667.00" cy="195.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="592.00" cy="170.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="642.00" cy="170.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="592.00" cy="120.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="642.00" cy="120.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="617.00" cy="145.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="642.00" cy="170.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="692.00" cy="170.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="642.00" cy="120.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="692.00" cy="120.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
-<circle cx="667.00" cy="145.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
 <circle cx="492.00" cy="120.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
 <circle cx="542.00" cy="120.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
 <circle cx="492.00" cy="70.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
@@ -134,24 +88,9 @@
 <circle cx="667.00" cy="45.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
 <rect x="492.00" y="20.00" width="200.00" height="200.00" fill="none" stroke="#000000" stroke-width="2"/>
 <text x="592.00" y="242.00" font-size="13" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif" fill="#000000">level 2</text>
-<text x="592.00" y="260.00" font-size="12" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif" fill="#000000">16 tested, 9 split</text>
-<rect x="728.00" y="170.00" width="50.00" height="50.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="778.00" y="170.00" width="50.00" height="50.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="728.00" y="145.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="753.00" y="145.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="728.00" y="120.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="753.00" y="120.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="778.00" y="145.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="803.00" y="145.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="778.00" y="120.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="803.00" y="120.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="828.00" y="170.00" width="50.00" height="50.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="878.00" y="170.00" width="50.00" height="50.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="828.00" y="145.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="853.00" y="145.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="828.00" y="120.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="853.00" y="120.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="878.00" y="120.00" width="50.00" height="50.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+<text x="592.00" y="260.00" font-size="12" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif" fill="#000000">8 tested, 5 split</text>
+<rect x="728.00" y="120.00" width="100.00" height="100.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+<rect x="828.00" y="120.00" width="100.00" height="100.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
 <rect x="728.00" y="95.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
 <rect x="753.00" y="95.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
 <rect x="728.00" y="70.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
@@ -168,10 +107,7 @@
 <rect x="803.00" y="45.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
 <rect x="778.00" y="20.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
 <rect x="803.00" y="20.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="828.00" y="95.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="853.00" y="95.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="828.00" y="70.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
-<rect x="853.00" y="70.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
+<rect x="828.00" y="70.00" width="50.00" height="50.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
 <rect x="878.00" y="70.00" width="50.00" height="50.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
 <rect x="828.00" y="45.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
 <rect x="853.00" y="45.00" width="25.00" height="25.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
@@ -180,9 +116,9 @@
 <rect x="878.00" y="20.00" width="50.00" height="50.00" fill="#ffffff" stroke="#000000" stroke-width="1.0"/>
 <rect x="728.00" y="20.00" width="200.00" height="200.00" fill="none" stroke="#000000" stroke-width="2"/>
 <text x="828.00" y="242.00" font-size="13" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif" fill="#000000">level 3 (final)</text>
-<text x="828.00" y="260.00" font-size="12" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif" fill="#000000">43 leaves, no further tests</text>
+<text x="828.00" y="260.00" font-size="12" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif" fill="#000000">25 leaves, no further tests</text>
 <circle cx="26.00" cy="282.00" r="2.2" fill="#000000" stroke="#000000" stroke-width="0"/>
 <text x="36.00" y="286.00" font-size="12" text-anchor="start" font-weight="normal" font-family="Helvetica, Arial, sans-serif" fill="#000000">the five samples tested in each cell (four corners and the centre)</text>
 <rect x="20.00" y="298.00" width="12.00" height="12.00" fill="#d0d0d0" stroke="#000000" stroke-width="1.0"/>
 <text x="38.00" y="308.00" font-size="12" text-anchor="start" font-weight="normal" font-family="Helvetica, Arial, sans-serif" fill="#000000">spread of the samples > tol, so the cell splits into four</text>
-<metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTplOWE4ODU3MC0yNGZmLTQwNGQtYTE3ZC1iYzIzM2YxZTUyYjYAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaE+t6Zn6TX/V+iEPkwMbZlIAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDowYTM1NmZjYS00N2E2LTRmYzUtYTBhMS0zY2ZiZTRjZjc1YjZscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNoitqp30nGHgtp2IWd4PrbdAAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggMfmJixtFoACAYcM8MngQTbZ5Pw+wrb7FFrLmcsxVi86kZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaD9YPTI8QmnOi18BchFpNR4AAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRMAAAAAAAAAAAAAAAAZGhhc2hYIKpx2od8el7vu9Hj/WjJvE0wHLLYMyWIqTeUYFzRANMCZG5hbWVuanVtYmYgbWFuaWZlc3RqZXhjbHVzaW9uc4GiZXN0YXJ0GUr7Zmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOmU5YTg4NTcwLTI0ZmYtNDA0ZC1hMTdkLWJjMjMzZjFlNTJiNi9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOjBhMzRkZmZhLTUxZWQtNDExNC05ZjZmLTRkOWRjMmQ1ZjU2MXJjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCAx+YmLG0WgAIBhwzwyeBBNtnk/D7CtvsUWsuZyzFWLzqJjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFggNDbsvucU4Y5y4gM+THa1n0EZAsHRdHLxLofIoF3KxmeiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFgg/VLQQAw3FmRDQpHCRxqDCw+OKpjm5VpaVvxtg53W8cF0Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQFvhUTcN5zrnFpSPHtJz2+OkU3YELI9zZVla+wEosEPBcpgT5Cvkp5mNZJYPXdViBBaIKs4ykiX5exYm1TJGASE=</c2pa:manifest></metadata></svg>
+</svg>

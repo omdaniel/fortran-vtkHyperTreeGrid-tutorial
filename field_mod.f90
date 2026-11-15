@@ -17,7 +17,7 @@ contains
   pure function bump_unit(x, y) result(f)
     real(dp), intent(in) :: x, y
     real(dp) :: f
-    real(dp), parameter :: xc = 0.35_dp, yc = 0.60_dp, sigma = 0.15_dp
+    real(dp), parameter :: xc = 0.20_dp, yc = 0.90_dp, sigma = 0.15_dp
     f = exp(-((x - xc)**2 + (y - yc)**2) / (2*sigma**2))
   end function bump_unit
 
