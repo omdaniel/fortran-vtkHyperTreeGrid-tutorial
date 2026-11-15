@@ -126,33 +126,11 @@ Printing the tree in the order it was built shows the depth-first structure. Eac
       ...
 ```
 
-Drawing each leaf as a box at its true size, labelled with its level, shows where the refinement went. Each finest (level-3) cell is 4 characters wide and 2 rows tall, so a level-2 leaf covers 2 x 2 of them and a level-1 leaf 4 x 4. The 25 leaves are 20 at level 3 over the bump in the upper left, 3 at level 2 around them, and 2 at level 1 along the bottom, where f is almost flat:
-
-```text
-+---+---+---+---+---+---+-------+
-| 3 | 3 | 3 | 3 | 3 | 3 |       |
-+---+---+---+---+---+---+   2   |
-| 3 | 3 | 3 | 3 | 3 | 3 |       |
-+---+---+---+---+---+---+-------+
-| 3 | 3 | 3 | 3 |       |       |
-+---+---+---+---+   2   |   2   |
-| 3 | 3 | 3 | 3 |       |       |
-+---+---+---+---+-------+-------+
-|               |               |
-|               |               |
-|               |               |
-|       1       |       1       |
-|               |               |
-|               |               |
-|               |               |
-+---------------+---------------+
-```
-
-The same refinement, drawn level by level. Dots are the five samples tested in each cell, and grey cells are the ones whose samples spread by more than tol, so they split. The code builds depth first rather than level by level, but it ends with the same mesh.
+The figure shows where the refinement went, level by level. Dots are the five samples tested in each cell, and grey cells are the ones whose samples spread by more than tol, so they split. The code builds depth first rather than level by level, but it ends with the same mesh.
 
 ![Refinement of the single tree, level by level](figures/refinement_steps.svg)
 
-The tree has 33 cells: 1 at level 0, 4 at level 1, 8 at level 2 and 20 at level 3, of which 25 are leaves.
+The tree has 33 cells: 1 at level 0, 4 at level 1, 8 at level 2 and 20 at level 3. Its 25 leaves mix all three refinement levels: 20 at level 3 over the bump in the upper left, 3 at level 2 around them, and 2 at level 1 along the bottom, where f is almost flat.
 
 Fully resolved, each leaf coloured by f at its centre through the perceptually uniform viridis colour map, on a scale covering the range of f, 0 to 1:
 
@@ -274,45 +252,9 @@ do j = 0, ny - 1
 end do
 ```
 
-The same drawing of the whole forest, with each finest cell 2 characters wide to keep it compact, shows the refinement crossing tree boundaries smoothly. Root cells are the 1 x 1 squares of the coarse grid, 16 characters wide and 16 rows tall here. No leaf crosses a root boundary, so those boundaries always show up as leaf edges. Each tree refines on its own, and nothing enforces a 2:1 balance criterion, either within a tree or across root cell boundaries. The end state is unbalanced: a level-1 leaf can sit next to level-3 leaves inside trees 0, 2 and 4, and across the root boundary at x = 2, level-3 leaves in tree 1 touch a level-1 leaf in tree 2. The breadth-first layout below does not depend on balance, but a more fully featured implementation would enforce it (see the caveats).
+The leaf cells of the whole forest, drawn below with thick lines for the root cell boundaries, show the refinement crossing tree boundaries smoothly. Root cells are the 1 x 1 squares of the coarse grid, and no leaf crosses a root boundary. Each tree refines on its own, and nothing enforces a 2:1 balance criterion, either within a tree or across root cell boundaries. The end state is unbalanced: a level-1 leaf can sit next to level-3 leaves inside trees 0, 2 and 4, and across the root boundary at x = 2, level-3 leaves in tree 1 touch a level-1 leaf in tree 2. The breadth-first layout below does not depend on balance, but a more fully featured implementation would enforce it (see the caveats).
 
-```text
-+-------+---+---+---+---+---+---+-------+-------+---------------+
-|       |   |   |   |   |   |   |       |       |               |
-|       | 2 | 2 | 2 | 2 | 2 | 2 |       |       |               |
-|       |   |   |   |   |   |   |       |       |               |
-|   1   +---+-+-+-+-+-+-+-+-+---+   1   |   1   |               |
-|       |   |3|3|3|3|3|3|3|3|   |       |       |               |
-|       | 2 +-+-+-+-+-+-+-+-+ 2 |       |       |               |
-|       |   |3|3|3|3|3|3|3|3|   |       |       |               |
-+-------+-+-+-+-+-+-+-+-+-+-+-+-+---+---+-------+       0       |
-|       |3|3|3|3|3|3|3|3|3|3|3|3|   |   |       |               |
-|       +-+-+-+-+-+-+-+-+-+-+-+-+ 2 | 2 |       |               |
-|       |3|3|3|3|3|3|3|3|3|3|3|3|   |   |       |               |
-|   1   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+---+   1   |               |
-|       |3|3|3|3|3|3|3|3|3|3|3|3|3|3|   |       |               |
-|       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+ 2 |       |               |
-|       |3|3|3|3|3|3|3|3|3|3|3|3|3|3|   |       |               |
-+-------+-+-+-+-+-+-+-+-+-+-+-+-+-+-+---+-------+---------------+
-|       |3|3|3|3|3|3|3|3|3|3|3|3|3|3|   |       |               |
-|       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+ 2 |       |               |
-|       |3|3|3|3|3|3|3|3|3|3|3|3|3|3|   |       |               |
-|   1   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+---+   1   |               |
-|       |3|3|3|3|3|3|3|3|3|3|3|3|3|3|   |       |               |
-|       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+ 2 |       |               |
-|       |3|3|3|3|3|3|3|3|3|3|3|3|3|3|   |       |               |
-+-------+-+-+-+-+-+-+-+-+-+-+-+-+-+-+---+-------+       0       |
-|       |3|3|3|3|3|3|3|3|3|3|3|3|       |       |               |
-|       +-+-+-+-+-+-+-+-+-+-+-+-+       |       |               |
-|       |3|3|3|3|3|3|3|3|3|3|3|3|       |       |               |
-|   1   +-+-+-+-+-+-+-+-+-+-+-+-+   1   |   1   |               |
-|       |   |3|3|3|3|3|3|3|3|   |       |       |               |
-|       | 2 +-+-+-+-+-+-+-+-+ 2 |       |       |               |
-|       |   |3|3|3|3|3|3|3|3|   |       |       |               |
-+-------+---+-+-+-+-+-+-+-+-+---+-------+-------+---------------+
-```
-
-Drawn, with thick lines for the root cell boundaries, then fully resolved and coloured by f on the same 0 to 1 viridis scale:
+The leaf cells, then the leaves coloured by f on the same 0 to 1 viridis scale:
 
 ![Leaf cells of the forest](figures/forest_mesh.svg)
 
