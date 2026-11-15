@@ -16,7 +16,8 @@ program forest
   type(qnode)    :: trees(0:ntrees - 1)
   type(htree_bf) :: bf(0:ntrees - 1)
   integer :: i, j, t
-  integer :: map(nx*m, ny*m)
+  integer, parameter :: cw = 2                   ! characters per finest cell
+  character :: canvas(0:cw*nx*m, 0:2*ny*m)
   integer, allocatable :: tree_ids(:), depth_per_tree(:), nverts(:), global_start(:)
   logical, allocatable :: descriptors(:)
   real(dp), allocatable :: cell_data(:)
@@ -34,16 +35,15 @@ program forest
     end do
   end do
 
-  map = -1
+  canvas = ' '
   do j = 0, ny - 1
     do i = 0, nx - 1
-      call leaf_level_map(trees(i + nx*j), map(i*m + 1:(i + 1)*m, j*m + 1:(j + 1)*m), 0, 0)
+      call draw_leaf_boxes(trees(i + nx*j), canvas, cw, i*m, j*m)
     end do
   end do
-  print '(a)', '== Leaf level map of the forest (y up, x right; | and - mark root cells) =='
-  do j = ny*m, 1, -1
-    print '(*(a))', (achar(48 + map(i, j)) // merge('|', ' ', mod(i, m) == 0 .and. i < nx*m), i = 1, nx*m)
-    if (mod(j - 1, m) == 0 .and. j > 1) print '(a)', repeat('-', 2*nx*m)
+  print '(a)', '== Leaf cells of the forest, labelled by level (y up, x right) =='
+  do j = 2*ny*m, 0, -1
+    print '(*(a))', canvas(:, j)
   end do
 
   ! 2. Each tree in breadth-first form.

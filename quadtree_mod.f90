@@ -15,7 +15,7 @@ module quadtree_mod
   private
 
   public :: dp, field2d
-  public :: qnode, make_root, refine, print_depth_first, leaf_level_map
+  public :: qnode, make_root, refine, print_depth_first, draw_leaf_boxes
   public :: htree_bf, to_breadth_first, to_breadth_first_queue, check_bf
   public :: bits_to_string, pack_bits_msb_first
 
@@ -138,22 +138,41 @@ contains
     end if
   end subroutine print_depth_first
 
-  !> Fill map(1:n, 1:n) with the level of the leaf covering each finest cell,
-  !> n = 2**MAX_LEVEL. map(i, j): i runs along x, j along y.
-  recursive subroutine leaf_level_map(node, map, i0, j0)
+  !> Draw every leaf as a box at its true size, with its level in the middle.
+  !> canvas(c, r) is the picture: column c runs along x, row r along y
+  !> (r = 0 at the bottom). Each finest cell is cw characters wide and 2 rows
+  !> tall, and (i0, j0) is the offset of this cell in finest cells.
+  !> Edges are drawn only over blanks and corners always, so a corner that
+  !> lies on a larger neighbour's edge still comes out as +.
+  recursive subroutine draw_leaf_boxes(node, canvas, cw, i0, j0)
     type(qnode), intent(in) :: node
-    integer, intent(inout) :: map(:, :)
-    integer, intent(in) :: i0, j0       ! offset of this cell in finest cells
-    integer :: ic, w
+    character, intent(inout) :: canvas(0:, 0:)
+    integer, intent(in) :: cw, i0, j0
+    integer :: ic, w, c0, c1, r0, r1, k
     w = 2**(MAX_LEVEL - node%level)     ! width of this cell in finest cells
-    if (.not. allocated(node%child)) then
-      map(i0 + 1:i0 + w, j0 + 1:j0 + w) = node%level
+    if (allocated(node%child)) then
+      do ic = 0, NCHILD - 1
+        call draw_leaf_boxes(node%child(ic), canvas, cw, &
+                             i0 + mod(ic, 2)*w/2, j0 + (ic/2)*w/2)
+      end do
       return
     end if
-    do ic = 0, NCHILD - 1
-      call leaf_level_map(node%child(ic), map, i0 + mod(ic, 2)*w/2, j0 + (ic/2)*w/2)
+    c0 = cw*i0
+    c1 = cw*(i0 + w)
+    r0 = 2*j0
+    r1 = 2*(j0 + w)
+    do k = c0 + 1, c1 - 1
+      if (canvas(k, r0) == ' ') canvas(k, r0) = '-'
+      if (canvas(k, r1) == ' ') canvas(k, r1) = '-'
     end do
-  end subroutine leaf_level_map
+    do k = r0 + 1, r1 - 1
+      if (canvas(c0, k) == ' ') canvas(c0, k) = '|'
+      if (canvas(c1, k) == ' ') canvas(c1, k) = '|'
+    end do
+    canvas([c0, c1], r0) = '+'
+    canvas([c0, c1], r1) = '+'
+    canvas((c0 + c1)/2, (r0 + r1)/2) = achar(iachar('0') + node%level)
+  end subroutine draw_leaf_boxes
 
   !-------------------------------------------------------------------------
   ! Depth first to breadth first

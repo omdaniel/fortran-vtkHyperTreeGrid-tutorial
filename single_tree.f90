@@ -10,7 +10,8 @@ program single_tree
   integer, parameter :: n = 2**MAX_LEVEL
   type(qnode), target :: root
   type(htree_bf) :: bf, bfq
-  integer :: map(n, n), j, d, first, last
+  character :: canvas(0:4*n, 0:2*n)
+  integer :: r, d, first, last
   integer, allocatable :: bytes(:)
 
   ! 1. Build depth first.
@@ -20,12 +21,12 @@ program single_tree
   print '(a)', '== Depth-first (build) order =='
   call print_depth_first(root, output_unit, '')
 
-  ! 2. Where the leaves ended up: level of the leaf over each finest cell.
-  map = -1
-  call leaf_level_map(root, map, 0, 0)
-  print '(/a)', '== Leaf level map (y up, x right) =='
-  do j = n, 1, -1
-    print '(*(i2))', map(:, j)
+  ! 2. Where the leaves ended up: each leaf drawn at its true size.
+  canvas = ' '
+  call draw_leaf_boxes(root, canvas, 4, 0, 0)
+  print '(/a)', '== Leaf cells, labelled by level (y up, x right) =='
+  do r = 2*n, 0, -1
+    print '(*(a))', canvas(:, r)
   end do
 
   ! 3. Breadth-first layout.
