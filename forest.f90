@@ -1,4 +1,4 @@
-!! Part 2 and 3 of the tutorial: a forest of quadtrees on a 4 x 2 grid of
+!! Part 3 of the tutorial: a forest of quadtrees on a 4 x 2 grid of
 !! unit root cells, and the global arrays vtkHyperTreeGrid (XML v2 / vtkHDF)
 !! expects for it.
 program forest

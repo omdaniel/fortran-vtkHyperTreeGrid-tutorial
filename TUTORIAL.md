@@ -68,7 +68,7 @@ logical function needs_refinement(node, f, tol)
 end function needs_refinement
 ```
 
-The build itself is one recursive subroutine. Depth first means a child's whole subtree is finished before its next sibling is started. The children are numbered the way VTK numbers them: child index ic = ix + 2\*iy, so bit 0 picks the -x or +x half and bit 1 picks the -y or +y half (x is the fastest bit).
+The build itself is one recursive subroutine. Depth first means a child's whole subtree is finished before its next sibling is started. The children are numbered the way VTK numbers them: child index ic = ix + 2\*iy, so bit 0 picks the -x or +x half and bit 1 picks the -y or +y half (x is the fastest bit). That is the rule for a grid in the xy plane, as here. In general bit 0 follows the first of the grid's two in-plane axes and bit 1 the second, and VTK does not always take them in alphabetical order: for a grid in the xz plane, VTK 9.7 orders them z then x.
 
 ![Child numbering inside a refined cell: 0 bottom left, 1 bottom right, 2 top left, 3 top right](figures/child_order.svg)
 
@@ -306,7 +306,7 @@ leaves                     : 191
 
 The sum of DepthPerTree (26) is the length of NumberOfVerticesPerDepth, which is how a reader splits the concatenated counts back into trees, and from those counts it knows how many descriptor bits each tree owns. As a last check, the program reads back the root value of tree 1 at `cell_data(global_start(2) + 1)` (Fortran is 1-based) and gets 0.51517, which equals f at the centre of root cell (1, 0).
 
-These names match what VTK itself writes. The XML HyperTreeGrid writer (format version 2) emits a `Trees` element holding `Descriptors`, `NumberOfVerticesPerDepth`, `TreeIds` and `DepthPerTree`, followed by `CellData` in this same per-tree breadth-first order. The vtkHDF format stores the same information as `Descriptors`, `DescriptorsSize` (in bits), `TreeIds`, `DepthPerTree` and `NumberOfCellsPerTreeDepth`, plus the root attributes `BranchFactor` and `Dimensions`; it also requires each piece's descriptor bits to start on a fresh byte.
+These names match what VTK itself writes. The XML HyperTreeGrid writer (format version 2) emits a `Trees` element holding `Descriptors`, `NumberOfVerticesPerDepth`, `TreeIds` and `DepthPerTree`, followed by `CellData` in this same per-tree breadth-first order. The vtkHDF format stores the same information as `Descriptors`, `DescriptorsSize` (in bits), `TreeIds`, `DepthPerTree` and `NumberOfCellsPerTreeDepth`, plus the root attributes `BranchFactor` and `Dimensions`. It adds what a file split into pieces needs: `NumberOfTrees`, `NumberOfCells` and `NumberOfDepths`, one entry per piece, and the coarse grid's `XCoordinates`, `YCoordinates` and `ZCoordinates`. It also requires each piece's descriptor bits to start on a fresh byte.
 
 ## Running it
 
@@ -322,7 +322,7 @@ gfortran -std=f2018 -Wall forest.f90 quadtree_mod.o field_mod.o -o forest
 ./forest
 ```
 
-The full output of both programs is saved next to the sources as `single_tree_output.txt` and `forest_output.txt`. The single-tree program ends with its three checks:
+The full output of both programs is saved next to the sources as `single_tree_output.txt` and `forest_output.txt`. Besides the listings quoted above, each program prints a character drawing of its leaf cells, labelled by level; the figures in this tutorial show the same meshes. The single-tree program ends with its three checks:
 
 ```text
 == Checks ==
@@ -341,13 +341,13 @@ The refinement test is deliberately naive and this example only works because th
 
 Other things this example leaves out on purpose:
 
-- **Mask:** no cells are blanked. vtkHyperTreeGrid allows an optional bit mask over leaves, which a real writer may need.
+- **Mask:** no cells are blanked. vtkHyperTreeGrid allows an optional bit mask with one bit per cell, in the same breadth-first order as the cell data. Any cell can be masked, not only a leaf; masking a refined cell hides its whole subtree, and VTK's writers then store that cell as a leaf and drop its descendants. A real writer may need this.
 - **Balance:** nothing enforces a 2:1 balance criterion, within a tree or across root boundaries, and the forest's end state is unbalanced. A more fully featured implementation would refine any leaf whose face neighbour is more than one level finer, and let that refinement ripple across root boundaries into neighbouring trees, which needs neighbour lookup between trees as well as within them.
 - **Refined-cell values:** a refined cell's value is f at its centre, not an average of its children. A writer for simulation data would choose its own rule.
 - **Pieces and I/O:** there is one piece and no file is written. vtkHDF also asks each piece's descriptor and mask bits to start on a new byte.
 - **Performance:** arrays grow by reallocation on assignment, which is quadratic. A production writer would count cells per depth first and fill preallocated arrays.
 
-What was checked, and what was not. The child ordering, the descriptor rules, the bit packing, the per-depth cell counts, the root indexing and the XML v2 array names were taken from VTK's documentation and source (listed below). The programs check their own arrays for consistency and compare two independent conversions. The arrays were not loaded into VTK or ParaView. The statement that vtkHDF cell data follows the same per-tree breadth-first order is inferred from the XML writer; the vtkHDF specification does not spell out the order.
+What was checked, and what was not. The child ordering, the descriptor rules, the bit packing, the per-depth cell counts, the root indexing and the XML v2 array names were taken from VTK's documentation and source (listed below). The programs check their own arrays for consistency and compare two independent conversions. The vtkHDF specification does not spell out the order of the cell data, but VTK's own vtkHDF writer settles it: it reorders every cell array through the breadth-first id map that `ComputeBreadthFirstOrderDescriptor` returns, tree by tree, which is the order used here. The arrays were not loaded into VTK or ParaView.
 
 ## Sources
 
@@ -359,4 +359,5 @@ Read on 14 Nov 2026.
 - [vtkHyperTree.cxx](https://github.com/Kitware/VTK/blob/master/Common/DataModel/vtkHyperTree.cxx): `ComputeBreadthFirstOrderDescriptor` and `BuildFromBreadthFirstOrderDescriptor`.
 - [vtkHyperTreeGrid.cxx](https://github.com/Kitware/VTK/blob/master/Common/DataModel/vtkHyperTreeGrid.cxx): `GetIndexFromLevelZeroCoordinates`, the root index formula.
 - [vtkBitArray.h](https://github.com/Kitware/VTK/blob/master/Common/Core/vtkBitArray.h): `SetValue` and the `0x80 >> bit` mask.
+- [vtkHDFWriter.cxx](https://github.com/Kitware/VTK/blob/master/IO/HDF/vtkHDFWriter.cxx): cell arrays and the mask written through the breadth-first id map (read on 15 Nov 2026, at v9.7.2).
 - [vtkXMLHyperTreeGridWriter.cxx](https://github.com/Kitware/VTK/blob/master/IO/XML/vtkXMLHyperTreeGridWriter.cxx): format version 2 array names and cell-data order.

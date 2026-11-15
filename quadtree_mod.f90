@@ -218,6 +218,8 @@ contains
   end subroutine collect
 
   !> The textbook alternative, used here only as a cross-check: a FIFO queue.
+  !> The queue holds pointers into the tree, so root needs the target
+  !> attribute here and in the caller. The tree is only read through them.
   function to_breadth_first_queue(root) result(bf)
     type(qnode), intent(in), target :: root
     type(htree_bf) :: bf

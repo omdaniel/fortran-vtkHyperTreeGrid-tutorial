@@ -64,51 +64,51 @@ on VTK or HDF5; the point is the data layout, not the file I/O.</p>
 <col style="width: 50%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th>File</th>
 <th>What it holds</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>quadtree_mod.f90</code></td>
 <td>The tree type, depth-first refinement, the breadth-first conversion
 and checks</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>field_mod.f90</code></td>
 <td>The function being mapped, a smooth Gaussian bump</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>single_tree.f90</code></td>
 <td>Parts 1 and 2: one tree on the unit square</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>forest.f90</code></td>
 <td>Part 3: a 4 x 2 forest and its global arrays</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>export_cells.f90</code></td>
 <td>Writes every cell of both examples to text, for the figures</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>make_figures.py</code></td>
 <td>Draws the SVG figures (Python standard library only)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>viridis256.txt</code></td>
 <td>The viridis colour table (CC0) used for the coloured figures</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>TUTORIAL.md</code></td>
 <td>This tutorial, as Markdown</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>make_site.py</code>, <code>site/</code></td>
 <td>Build the styled GitHub Pages version of this tutorial into
 <code>docs/</code> (needs pandoc)</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>Makefile</code></td>
 <td><code>make run</code> builds and runs the programs;
 <code>make figures</code> redraws the figures; <code>make site</code>
@@ -172,7 +172,11 @@ tolerance. Refinement stops at level 3, so a terminal leaf is at most
 child’s whole subtree is finished before its next sibling is started.
 The children are numbered the way VTK numbers them: child index ic = ix
 + 2*iy, so bit 0 picks the -x or +x half and bit 1 picks the -y or +y
-half (x is the fastest bit).</p>
+half (x is the fastest bit). That is the rule for a grid in the xy
+plane, as here. In general bit 0 follows the first of the grid’s two
+in-plane axes and bit 1 the second, and VTK does not always take them in
+alphabetical order: for a grid in the xz plane, VTK 9.7 orders them z
+then x.</p>
 <figure>
 <img loading="lazy" src="figures/child_order.svg"
 alt="Child numbering inside a refined cell: 0 bottom left, 1 bottom right, 2 top left, 3 top right" />
@@ -418,7 +422,7 @@ Trees 3 and 7 are a single leaf root, so they have depth 1 and no
 descriptor bits at all.</p>
 <div class="table-wrap"><table>
 <thead>
-<tr class="header">
+<tr>
 <th>Tree</th>
 <th>(i, j)</th>
 <th>Depth</th>
@@ -427,56 +431,56 @@ descriptor bits at all.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>0</td>
 <td>(0, 0)</td>
 <td>4</td>
 <td>1 4 8 28</td>
 <td>1 0101 01111111</td>
 </tr>
-<tr class="even">
+<tr>
 <td>1</td>
 <td>(1, 0)</td>
 <td>4</td>
 <td>1 4 16 60</td>
 <td>1 1111 1111101111111111</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>2</td>
 <td>(2, 0)</td>
 <td>4</td>
 <td>1 4 4 8</td>
 <td>1 0010 1010</td>
 </tr>
-<tr class="even">
+<tr>
 <td>3</td>
 <td>(3, 0)</td>
 <td>1</td>
 <td>1</td>
 <td>none</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>4</td>
 <td>(0, 1)</td>
 <td>4</td>
 <td>1 4 8 20</td>
 <td>1 0101 11110100</td>
 </tr>
-<tr class="even">
+<tr>
 <td>5</td>
 <td>(1, 1)</td>
 <td>4</td>
 <td>1 4 16 44</td>
 <td>1 1111 1111111111001000</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>6</td>
 <td>(2, 1)</td>
 <td>4</td>
 <td>1 4 4 4</td>
 <td>1 1000 1000</td>
 </tr>
-<tr class="even">
+<tr>
 <td>7</td>
 <td>(3, 1)</td>
 <td>1</td>
@@ -529,7 +533,11 @@ vtkHDF format stores the same information as <code>Descriptors</code>,
 <code>DescriptorsSize</code> (in bits), <code>TreeIds</code>,
 <code>DepthPerTree</code> and <code>NumberOfCellsPerTreeDepth</code>,
 plus the root attributes <code>BranchFactor</code> and
-<code>Dimensions</code>; it also requires each piece’s descriptor bits
+<code>Dimensions</code>. It adds what a file split into pieces needs:
+<code>NumberOfTrees</code>, <code>NumberOfCells</code> and
+<code>NumberOfDepths</code>, one entry per piece, and the coarse grid’s
+<code>XCoordinates</code>, <code>YCoordinates</code> and
+<code>ZCoordinates</code>. It also requires each piece’s descriptor bits
 to start on a fresh byte.</p>
 <h2 id="running-it"><a class="anchor" href="#running-it" aria-hidden="true">#</a>Running it</h2>
 <p>Any Fortran 2008 compiler should do; this was built and run with
@@ -545,7 +553,10 @@ builds were clean and gave the same output.</p>
 <span class="nm">./forest</span></code></pre></div>
 <p>The full output of both programs is saved next to the sources as
 <code>single_tree_output.txt</code> and <code>forest_output.txt</code>.
-The single-tree program ends with its three checks:</p>
+Besides the listings quoted above, each program prints a character
+drawing of its leaf cells, labelled by level; the figures in this
+tutorial show the same meshes. The single-tree program ends with its
+three checks:</p>
 <div class="codeblock lang-text"><span class="lang">Output</span><pre class="code"><code>== Checks ==
 layout is self-consistent         : T
 bucket walk == FIFO queue (bits)  : T
@@ -573,7 +584,11 @@ that is attempted here.</p>
 <p>Other things this example leaves out on purpose:</p>
 <ul>
 <li><strong>Mask:</strong> no cells are blanked. vtkHyperTreeGrid allows
-an optional bit mask over leaves, which a real writer may need.</li>
+an optional bit mask with one bit per cell, in the same breadth-first
+order as the cell data. Any cell can be masked, not only a leaf; masking
+a refined cell hides its whole subtree, and VTK’s writers then store
+that cell as a leaf and drop its descendants. A real writer may need
+this.</li>
 <li><strong>Balance:</strong> nothing enforces a 2:1 balance criterion,
 within a tree or across root boundaries, and the forest’s end state is
 unbalanced. A more fully featured implementation would refine any leaf
@@ -594,10 +609,13 @@ per depth first and fill preallocated arrays.</li>
 descriptor rules, the bit packing, the per-depth cell counts, the root
 indexing and the XML v2 array names were taken from VTK’s documentation
 and source (listed below). The programs check their own arrays for
-consistency and compare two independent conversions. The arrays were not
-loaded into VTK or ParaView. The statement that vtkHDF cell data follows
-the same per-tree breadth-first order is inferred from the XML writer;
-the vtkHDF specification does not spell out the order.</p>
+consistency and compare two independent conversions. The vtkHDF
+specification does not spell out the order of the cell data, but VTK’s
+own vtkHDF writer settles it: it reorders every cell array through the
+breadth-first id map that
+<code>ComputeBreadthFirstOrderDescriptor</code> returns, tree by tree,
+which is the order used here. The arrays were not loaded into VTK or
+ParaView.</p>
 <h2 id="sources"><a class="anchor" href="#sources" aria-hidden="true">#</a>Sources</h2>
 <p>Read on 14 Nov 2026.</p>
 <ul>
@@ -622,6 +640,10 @@ formula.</li>
 <li><a
 href="https://github.com/Kitware/VTK/blob/master/Common/Core/vtkBitArray.h">vtkBitArray.h</a>:
 <code>SetValue</code> and the <code>0x80 &gt;&gt; bit</code> mask.</li>
+<li><a
+href="https://github.com/Kitware/VTK/blob/master/IO/HDF/vtkHDFWriter.cxx">vtkHDFWriter.cxx</a>:
+cell arrays and the mask written through the breadth-first id map (read
+on 15 Nov 2026, at v9.7.2).</li>
 <li><a
 href="https://github.com/Kitware/VTK/blob/master/IO/XML/vtkXMLHyperTreeGridWriter.cxx">vtkXMLHyperTreeGridWriter.cxx</a>:
 format version 2 array names and cell-data order.</li>

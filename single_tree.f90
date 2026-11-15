@@ -1,4 +1,4 @@
-!! Part 1 and 3 of the tutorial: one quadtree over the unit square,
+!! Parts 1 and 2 of the tutorial: one quadtree over the unit square,
 !! built depth first, then laid out breadth first as vtkHyperTreeGrid does.
 program single_tree
   use, intrinsic :: iso_fortran_env, only: output_unit

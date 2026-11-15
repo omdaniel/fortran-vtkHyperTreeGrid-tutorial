@@ -3,6 +3,9 @@
 !!
 !! Columns: tree  path  level  refined  x0  y0  h  value
 !! "path" is the string of child indices from the root ("r" for the root).
+!! Reals are written to 13 significant digits: plenty for the figures, and
+!! few enough that the files do not change in the last digit from one
+!! compiler or optimisation level to the next.
 program export_cells
   use quadtree_mod
   use field_mod, only: bump_unit, bump_forest
@@ -41,7 +44,7 @@ contains
     character(*), intent(in) :: path
     integer :: ic
     character(len=1) :: digit
-    write (u, '(i0, 1x, a, 1x, i0, 1x, i0, 4(1x, es23.15e3))') t, 'r' // path, node%level, &
+    write (u, '(i0, 1x, a, 1x, i0, 1x, i0, 4(1x, es20.12e3))') t, 'r' // path, node%level, &
       merge(1, 0, allocated(node%child)), node%x0, node%y0, node%h, node%value
     if (allocated(node%child)) then
       do ic = 0, NCHILD - 1
