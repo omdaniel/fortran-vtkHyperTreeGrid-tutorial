@@ -173,10 +173,11 @@ child’s whole subtree is finished before its next sibling is started.
 The children are numbered the way VTK numbers them: child index ic = ix
 + 2*iy, so bit 0 picks the -x or +x half and bit 1 picks the -y or +y
 half (x is the fastest bit). That is the rule for a grid in the xy
-plane, as here. In general bit 0 follows the first of the grid’s two
-in-plane axes and bit 1 the second, and VTK does not always take them in
-alphabetical order: for a grid in the xz plane, VTK 9.7 orders them z
-then x.</p>
+plane, as here. In any plane, bit 0 follows the lower of the grid’s two
+in-plane axes (x before y before z) and bit 1 the higher: in an xz-plane
+grid bit 0 picks the x half and bit 1 the z half. This holds even though
+<code>vtkHyperTreeGrid::GetAxes</code> lists the axes of an xz-plane
+grid as z then x; that order does not affect child numbering.</p>
 <figure>
 <img loading="lazy" src="figures/child_order.svg"
 alt="Child numbering inside a refined cell: 0 bottom left, 1 bottom right, 2 top left, 3 top right" />
